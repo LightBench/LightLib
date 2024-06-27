@@ -1,0 +1,4 @@
+name: LightPlugin
+version: '${project.version}'
+main: com.frahhs.lightlib.LightPlugin
+api-version: '1.19'
