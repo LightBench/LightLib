@@ -50,7 +50,6 @@ public abstract class LightPlugin extends JavaPlugin {
 
         // Enable managers
         messagesProvider = new MessagesProvider(this);
-        messagesProvider.setAutoUpdate(false);
 
         itemManager = new ItemManager(this);
         commandManager  = new PaperCommandManager(this);
