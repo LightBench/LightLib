@@ -9,11 +9,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Abstract class representing a custom Light item.
@@ -25,7 +27,7 @@ public abstract class LightItem extends LightObject {
     /**
      * Init for LightItem.
      */
-    protected void init() {
+    protected void init(JavaPlugin plugin) {
         this.namespacedKey = new NamespacedKey(plugin, getIdentifier());
 
         item = new ItemStack(getVanillaMaterial(), 1);
@@ -53,7 +55,20 @@ public abstract class LightItem extends LightObject {
      * @return The ItemStack of the custom Light item.
      */
     public ItemStack getItemStack() {
-        return item.clone();
+        ItemStack newItem = item.clone();
+
+        ItemMeta meta = newItem.getItemMeta();
+        assert meta != null;
+
+        // UUID
+        if(isUnique()) {
+            NamespacedKey uuidKey = new NamespacedKey(plugin, "uuid");
+            meta.getPersistentDataContainer().set(uuidKey, PersistentDataType.STRING, UUID.randomUUID().toString());
+        }
+
+        newItem.setItemMeta(meta);
+
+        return newItem;
     }
 
     /**
@@ -153,6 +168,11 @@ public abstract class LightItem extends LightObject {
      * Retrieves if the custom Light item can be given.
      */
     public abstract boolean isGivable();
+
+    /**
+     * Retrieves if the custom Light item is unique.
+     */
+    public abstract boolean isUnique();
 
     /**
      * Retrieves the name of the custom Light item.

@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class ItemManager {
         }
 
         lightItems.put(lightItem.getIdentifier(), lightItem);
-        lightItem.init();
+        lightItem.init(plugin);
         if (lightItem.isCraftable()) {
             LightPlugin.getLightLogger().finer("Adding %s shaped recipe.", lightItem.getName());
             plugin.getServer().addRecipe(lightItem.getShapedRecipe(plugin));
@@ -147,10 +148,11 @@ public class ItemManager {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
 
-        // Remove PersistentDataContainer keys from the ItemStack
+        // Remove PersistentDataContainer keys from the ItemStack, except for the uuid
         PersistentDataContainer container = meta.getPersistentDataContainer();
         for(NamespacedKey key : container.getKeys())
-            container.remove(key);
+            if(!key.getKey().equals("uuid"))
+                container.remove(key);
 
         // Remove Lore the ItemStack
         meta.setLore(null);
