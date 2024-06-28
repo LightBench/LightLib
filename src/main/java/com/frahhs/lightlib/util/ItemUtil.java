@@ -1,5 +1,6 @@
 package com.frahhs.lightlib.util;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -15,6 +16,9 @@ public class ItemUtil {
             BukkitObjectOutputStream data = new BukkitObjectOutputStream(str);
             data.writeInt(items.length);
             for(ItemStack item : items) {
+                if(item == null)
+                    item = new ItemStack(Material.AIR);
+
                 data.writeObject(item);
             }
             data.close();

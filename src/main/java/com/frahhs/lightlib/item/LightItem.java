@@ -55,9 +55,9 @@ public abstract class LightItem extends LightObject {
      * @return The ItemStack of the custom Light item.
      */
     public ItemStack getItemStack() {
-        ItemStack newItem = item.clone();
+        ItemStack ItemStack = item.clone();
 
-        ItemMeta meta = newItem.getItemMeta();
+        ItemMeta meta = ItemStack.getItemMeta();
         assert meta != null;
 
         // UUID
@@ -66,9 +66,9 @@ public abstract class LightItem extends LightObject {
             meta.getPersistentDataContainer().set(uuidKey, PersistentDataType.STRING, UUID.randomUUID().toString());
         }
 
-        newItem.setItemMeta(meta);
+        ItemStack.setItemMeta(meta);
 
-        return newItem;
+        return ItemStack;
     }
 
     /**

@@ -2,16 +2,14 @@ package com.frahhs.lightlib.item;
 
 import com.frahhs.lightlib.LightPlugin;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class for managing custom items related to Light mechanics.
@@ -86,9 +84,9 @@ public class ItemManager {
      * @return The corresponding LightItem, or null if no matching LightItem is found.
      */
     public LightItem get(String identifier) {
-        for (LightItem item : lightItems.values()) {
-            if (item.getIdentifier().equals(identifier)) {
-                return item;
+        for (LightItem curItem : lightItems.values()) {
+            if (curItem.getIdentifier().equals(identifier)) {
+                return curItem;
             }
         }
         return null;
@@ -101,16 +99,16 @@ public class ItemManager {
      * @return The corresponding LightItem, or null if no matching LightItem is found.
      */
     public LightItem get(ItemStack itemStack) {
-        ItemStack item = clean(itemStack);
-
         for (LightItem curItem : lightItems.values()) {
+            ItemStack item1 = clean(itemStack);
             ItemStack item2 = clean(curItem.getItemStack());
-            if (item2.isSimilar(item)) {
+            if(item1.isSimilar(item2)) {
                 return curItem;
             }
         }
         return null;
     }
+
 
     /**
      * Retrieves all registered LightItem.
@@ -142,17 +140,17 @@ public class ItemManager {
         return false;
     }
 
+    // return a cloned clean item
     private ItemStack clean(ItemStack itemStack) {
         ItemStack item = itemStack.clone();
 
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
 
-        // Remove PersistentDataContainer keys from the ItemStack, except for the uuid
+        // Remove PersistentDataContainer keys from the ItemStack
         PersistentDataContainer container = meta.getPersistentDataContainer();
         for(NamespacedKey key : container.getKeys())
-            if(!key.getKey().equals("uuid"))
-                container.remove(key);
+            container.remove(key);
 
         // Remove Lore the ItemStack
         meta.setLore(null);
