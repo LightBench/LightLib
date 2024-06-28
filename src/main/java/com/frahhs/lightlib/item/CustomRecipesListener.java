@@ -22,7 +22,7 @@ public class CustomRecipesListener extends LightListener {
                 // Check if it is a custom item
                 if (cur.getItemStack().isSimilar(item)) {
                     // Check if player have permission
-                    if (!player.hasPermission(String.format(LightPlugin.getInstance().getPermissionPrefix() + ".craft.%s", cur.getName().toLowerCase()))) {
+                    if (!player.hasPermission(String.format(LightPlugin.getOptions().getPermissionPrefix() + ".craft.%s", cur.getName().toLowerCase()))) {
                         String message = messages.getMessage("general.no_permissions");
                         player.sendMessage(message);
                         e.setCancelled(true);

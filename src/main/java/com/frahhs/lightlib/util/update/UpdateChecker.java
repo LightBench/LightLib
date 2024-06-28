@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.ServerLoadEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -17,11 +18,23 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class UpdateChecker implements Listener {
-
-    private String url = "https://api.spigotmc.org/legacy/update.php?resource=";
-    private String id = "117484";
+    private final String url = "https://api.spigotmc.org/legacy/update.php?resource=";
+    private static String id;
 
     private static boolean isAvailable = false;
+
+    /**
+     * Check if a new update is out on spigot
+     *
+     * @param id the spigot resource id.
+     */
+    public UpdateChecker(String id) {
+        this.id = id;
+    }
+
+    public void enable(JavaPlugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
 
     public boolean isAvailable() {
         return UpdateChecker.isAvailable;
@@ -29,23 +42,22 @@ public class UpdateChecker implements Listener {
 
     @EventHandler
     public void onAdminJoin(PlayerJoinEvent event) {
-        ConfigProvider config = LightPlugin.getInstance().getConfigProvider();
+        ConfigProvider config = LightPlugin.getConfigProvider();
 
         // Check if new version is out
         if(config.getBoolean("update-check")) {
-            UpdateChecker updateChecker = new UpdateChecker();
-            updateChecker.check();
+            check();
         }
 
         if(UpdateChecker.isAvailable && config.getBoolean("update-check")) {
-            if(event.getPlayer().hasPermission(LightPlugin.getInstance().getPermissionPrefix() + ".admin")) {
-                String prefix = LightPlugin.getInstance().getMessagesProvider().getPrefix();
+            if(event.getPlayer().hasPermission(LightPlugin.getOptions().getPermissionPrefix() + ".admin")) {
+                String prefix = LightPlugin.getMessagesProvider().getPrefix();
                 String message =
-                                prefix + ChatColor.DARK_GREEN + "New version of LightPlugin is out!\n" +
-                                prefix + ChatColor.DARK_GREEN + "New version is: " + ChatColor.GOLD + getNewVersion() + ChatColor.DARK_GREEN + ".\n" +
-                                prefix + ChatColor.DARK_GREEN + "Your actual version is: " + ChatColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ChatColor.DARK_GREEN + ".\n" +
-                                prefix + ChatColor.DARK_GREEN + "Download at: \n" +
-                                prefix + ChatColor.DARK_GREEN + "https://www.spigotmc.org/resources/LightPlugin.117484/";
+                    prefix + ChatColor.DARK_GREEN + "New version of LightPlugin is out!\n" +
+                    prefix + ChatColor.DARK_GREEN + "New version is: " + ChatColor.GOLD + getNewVersion() + ChatColor.DARK_GREEN + ".\n" +
+                    prefix + ChatColor.DARK_GREEN + "Your actual version is: " + ChatColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ChatColor.DARK_GREEN + ".\n" +
+                    prefix + ChatColor.DARK_GREEN + "Download at: \n" +
+                    prefix + ChatColor.DARK_GREEN + "https://www.spigotmc.org/resources/LightPlugin.117484/";
 
                 event.getPlayer().sendMessage(message);
             }
@@ -54,12 +66,11 @@ public class UpdateChecker implements Listener {
 
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
-        ConfigProvider config = LightPlugin.getInstance().getConfigProvider();
+        ConfigProvider config = LightPlugin.getConfigProvider();
 
         // Check if new version is out
         if(config.getBoolean("update-check")) {
-            UpdateChecker updateChecker = new UpdateChecker();
-            updateChecker.check();
+            check();
         }
 
         // Check if new version is out

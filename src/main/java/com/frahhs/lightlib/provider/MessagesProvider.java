@@ -30,9 +30,6 @@ public class MessagesProvider {
     private String prefix;
     private Map<String, FileConfiguration> languageConfigs;
 
-    private boolean autoUpdate = true;
-
-
     /**
      * Constructs a new MessagesManager.
      *
@@ -104,15 +101,6 @@ public class MessagesProvider {
     }
 
     /**
-     * Enable or disable auto update option.
-     *
-     * @param autoUpdate true to enable, false otherwise.
-     */
-    public void setAutoUpdate(boolean autoUpdate) {
-        this.autoUpdate = autoUpdate;
-    }
-
-    /**
      * Retrieves a localized message for the given language and key.
      *
      * @param key The key of the message to retrieve.
@@ -151,8 +139,7 @@ public class MessagesProvider {
         }
 
         // Load YAML files from messages folder
-        if(autoUpdate)
-            YamlUpdater.update();
+        YamlUpdater.update();
 
         File[] languageFiles = messagesFolder.listFiles((dir, name) -> name.endsWith(".yml"));
 
@@ -219,11 +206,14 @@ public class MessagesProvider {
     }
 
     private static class YamlUpdater {
-        private static final String GITHUB_CONTENTS_URL = "https://api.github.com/repos/FrahHS/LightPlugin/contents/LightPlugin/src/main/resources/lang";
-        private static final String GITHUB_URL_TEMPLATE = "https://raw.githubusercontent.com/FrahHS/LightPlugin/main/LightPlugin/src/main/resources/lang/";
+        private static final String GITHUB_CONTENTS_URL = LightPlugin.getOptions().getGithubContentsUrl();
+        private static final String GITHUB_URL_TEMPLATE = LightPlugin.getOptions().getGithubUrlTemplate();
         private static final String LOCAL_PATH_TEMPLATE = LightPlugin.getInstance().getDataFolder() + File.separator + "lang" + File.separator;
 
         public static void update() {
+            if(GITHUB_URL_TEMPLATE == null || GITHUB_CONTENTS_URL == null)
+                return;
+
             try {
                 List<String> languages = fetchAvailableLanguages();
 

@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class ItemManager {
     private final JavaPlugin plugin;
-    private final Map<String, LightItem> rbItems;
+    private final Map<String, LightItem> lightItems;
 
     /**
      * Constructor for ItemManager.
@@ -28,24 +28,25 @@ public class ItemManager {
         this.plugin = plugin;
 
         // Initialize the items map
-        rbItems = new HashMap<>();
+        lightItems = new HashMap<>();
         plugin.getServer().getPluginManager().registerEvents(new CustomRecipesListener(), plugin);
     }
 
     /**
      * Registers a custom LightItem.
      *
-     * @param rbItem The LightItem to register.
+     * @param lightItem The LightItem to register.
      */
-    public void registerItems(LightItem rbItem, JavaPlugin plugin) {
-        if (rbItems.containsKey(rbItem.getName())) {
-            throw new RuntimeException(String.format("Item name [%s] already exists.", rbItem.getName()));
+    public void registerItems(LightItem lightItem, JavaPlugin plugin) {
+        if (lightItems.containsKey(lightItem.getIdentifier())) {
+            throw new RuntimeException(String.format("Item name [%s] already exists.", lightItem.getName()));
         }
 
-        rbItems.put(rbItem.getName(), rbItem);
-        if (rbItem.isCraftable()) {
-            LightPlugin.getLightLogger().finer("Adding %s shaped recipe.", rbItem.getName());
-            plugin.getServer().addRecipe(rbItem.getShapedRecipe(plugin));
+        lightItems.put(lightItem.getIdentifier(), lightItem);
+        lightItem.init();
+        if (lightItem.isCraftable()) {
+            LightPlugin.getLightLogger().finer("Adding %s shaped recipe.", lightItem.getName());
+            plugin.getServer().addRecipe(lightItem.getShapedRecipe(plugin));
         }
     }
 
@@ -53,13 +54,13 @@ public class ItemManager {
      * Dispose all registered items.
      */
     public void dispose() {
-        for (String key : rbItems.keySet()) {
-            if (rbItems.get(key).isCraftable()) {
-                LightPlugin.getLightLogger().finer("Removing %s shaped recipe.", rbItems.get(key).getName());
-                plugin.getServer().removeRecipe(rbItems.get(key).getNamespacedKey());
+        for (String key : lightItems.keySet()) {
+            if (lightItems.get(key).isCraftable()) {
+                LightPlugin.getLightLogger().finer("Removing %s shaped recipe.", lightItems.get(key).getName());
+                plugin.getServer().removeRecipe(lightItems.get(key).getNamespacedKey());
             }
         }
-        rbItems.clear();
+        lightItems.clear();
     }
 
     /**
@@ -69,7 +70,7 @@ public class ItemManager {
      * @return The corresponding LightItem, or null if no matching LightItem is found.
      */
     public LightItem get(Class<? extends LightItem> itemClass) {
-        for (LightItem item : rbItems.values()) {
+        for (LightItem item : lightItems.values()) {
             if (item.getClass().equals(itemClass)) {
                 return item;
             }
@@ -84,7 +85,7 @@ public class ItemManager {
      * @return The corresponding LightItem, or null if no matching LightItem is found.
      */
     public LightItem get(String identifier) {
-        for (LightItem item : rbItems.values()) {
+        for (LightItem item : lightItems.values()) {
             if (item.getIdentifier().equals(identifier)) {
                 return item;
             }
@@ -101,7 +102,7 @@ public class ItemManager {
     public LightItem get(ItemStack itemStack) {
         ItemStack item = clean(itemStack);
 
-        for (LightItem curItem : rbItems.values()) {
+        for (LightItem curItem : lightItems.values()) {
             ItemStack item2 = clean(curItem.getItemStack());
             if (item2.isSimilar(item)) {
                 return curItem;
@@ -116,7 +117,7 @@ public class ItemManager {
      * @return A collection of all registered LightItem.
      */
     public Set<LightItem> getRegisteredItems() {
-        return new HashSet<>(rbItems.values());
+        return new HashSet<>(lightItems.values());
     }
 
     /**
@@ -131,7 +132,7 @@ public class ItemManager {
 
         ItemStack item = clean(itemStack);
 
-        for (LightItem curItem : rbItems.values()) {
+        for (LightItem curItem : lightItems.values()) {
             ItemStack item2 = clean(curItem.getItemStack());
             if (item2.isSimilar(item)) {
                 return true;

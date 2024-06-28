@@ -26,14 +26,14 @@ public class LightBlockListener extends LightListener {
             return;
 
         // Instance of the Light item.
-        LightItem rbItem = itemManager.get(item);
+        LightItem lightItem = itemManager.get(item);
 
         // Check if is a Light block.
-        if(!rbItem.getVanillaMaterial().isBlock())
+        if(!lightItem.getVanillaMaterial().isBlock())
             return;
 
         // Instance of the Light block.
-        LightBlock block = new LightBlock(rbItem, e.getBlock().getLocation().clone());
+        LightBlock block = new LightBlock(lightItem, e.getBlock().getLocation().clone());
 
         // Do the place action.
         block.place(e.getPlayer());
@@ -49,7 +49,7 @@ public class LightBlockListener extends LightListener {
 
         if(lightBlockPlaceEvent.isCancelled()) {
             block.destroy();
-            e.getPlayer().getInventory().addItem(rbItem.getItemStack());
+            e.getPlayer().getInventory().addItem(lightItem.getItemStack());
         }
     }
 

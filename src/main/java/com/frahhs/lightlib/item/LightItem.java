@@ -19,14 +19,14 @@ import java.util.List;
  * Abstract class representing a custom Light item.
  */
 public abstract class LightItem extends LightObject {
-    protected final NamespacedKey namespacedKey;
+    protected NamespacedKey namespacedKey;
     protected ItemStack item;
 
     /**
-     * Constructor for LightItem.
+     * Init for LightItem.
      */
-    protected LightItem() {
-        this.namespacedKey = new NamespacedKey(plugin, getName());
+    protected void init() {
+        this.namespacedKey = new NamespacedKey(plugin, getIdentifier());
 
         item = new ItemStack(getVanillaMaterial(), 1);
 

@@ -31,9 +31,12 @@ public abstract class LightPlugin extends JavaPlugin {
     private static FeatureManager featureManager;
     private static PaperCommandManager commandManager;
 
-    public abstract void lightEnabled();
+    // Options
+    private static LightOptions options;
 
-    public abstract void lightDisabled();
+    public abstract void onLightLoad();
+    public abstract void onLightEnabled();
+    public abstract void onLightDisabled();
 
     @Override
     public void onEnable() {
@@ -67,9 +70,17 @@ public abstract class LightPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new LightBlockListener(),this);
         getServer().getPluginManager().registerEvents(new GUIListener(),this);
-        getServer().getPluginManager().registerEvents(new UpdateChecker(),this);
 
-        lightEnabled();
+        if(options.getUpdateCheck()) {
+            if(options.getSpigotMarketID() == null) {
+                logger.warning("Update checker is on, but the Spigot Market ID is null.");
+            } else {
+                UpdateChecker updateChecker = new UpdateChecker(options.getSpigotMarketID());
+                updateChecker.enable(this);
+            }
+        }
+
+        onLightEnabled();
 
         // Disable plugin if is disabled in the config
         if(!configProvider.getBoolean("enabled"))
@@ -93,7 +104,13 @@ public abstract class LightPlugin extends JavaPlugin {
         // Close logger
         logger.close();
 
-        lightDisabled();
+        onLightDisabled();
+    }
+
+    @Override
+    public void onLoad() {
+        options = new LightOptions();
+        onLightLoad();
     }
 
     public void onReload() {
@@ -190,9 +207,11 @@ public abstract class LightPlugin extends JavaPlugin {
     }
 
     /**
-     * Will retrieve the ItemManager
+     * Will retrieve the LightOptions
      *
-     * @return the ItemManager
+     * @return the LightOptions
      */
-    public abstract String getPermissionPrefix();
+    public static LightOptions getOptions() {
+        return options;
+    }
 }
