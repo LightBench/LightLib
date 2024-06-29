@@ -49,7 +49,7 @@ public class LightBlockListener extends LightListener {
 
         if(lightBlockPlaceEvent.isCancelled()) {
             block.destroy();
-            e.getPlayer().getInventory().addItem(lightItem.getItemStack());
+            e.setCancelled(true);
         }
     }
 

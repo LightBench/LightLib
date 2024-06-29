@@ -24,7 +24,7 @@ public abstract class LightBlockEvent extends LightEvent {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

@@ -4,10 +4,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class LightEvent extends Event {
+public abstract class LightEvent extends Event {
     @NotNull
     @Override
-    public HandlerList getHandlers() {
-        return null;
-    }
+    public abstract HandlerList getHandlers();
 }
