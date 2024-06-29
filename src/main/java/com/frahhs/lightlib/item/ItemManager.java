@@ -99,6 +99,9 @@ public class ItemManager {
      * @return The corresponding LightItem, or null if no matching LightItem is found.
      */
     public LightItem get(ItemStack itemStack) {
+        if(itemStack == null)
+            return null;
+
         for (LightItem curItem : lightItems.values()) {
             ItemStack item1 = clean(itemStack);
             ItemStack item2 = clean(curItem.getItemStack());
