@@ -26,6 +26,7 @@ public class LightBlock extends LightProvider {
     private final LightItem item;
     private ItemDisplay itemDisplay;
     private Location location;
+    private final Player placer;
 
     /**
      * Constructs a new LightBlock.
@@ -33,9 +34,10 @@ public class LightBlock extends LightProvider {
      * @param item The Light item associated with this block.
      * @param location The location of the block.
      */
-    public LightBlock(LightItem item, Location location) {
+    public LightBlock(LightItem item, Location location, Player placer) {
         this.item = item;
         this.location = location;
+        this.placer = placer;
     }
 
     /**
@@ -89,6 +91,10 @@ public class LightBlock extends LightProvider {
 
     public UUID getUniqueId() {
         return itemDisplay.getUniqueId();
+    }
+
+    public Player getPlacer() {
+        return placer;
     }
 
     /**
@@ -310,7 +316,10 @@ public class LightBlock extends LightProvider {
                 ItemManager itemManager = LightPlugin.getItemsManager();
                 LightItem item = itemManager.get(identifier);
 
-                LightBlock block = new LightBlock(item, location);
+                String placer = rs.getString("placer");
+                Player player = Bukkit.getPlayer(UUID.fromString(placer));
+
+                LightBlock block = new LightBlock(item, location, player);
 
                 // Entity can be null if someone manually destroyed it
                 String entityUUID = rs.getString("entityUUID");
@@ -357,8 +366,11 @@ public class LightBlock extends LightProvider {
                 int blockY = rs.getInt("blockY");
                 int blockZ = rs.getInt("blockZ");
 
+                String placer = rs.getString("placer");
+                Player player = Bukkit.getPlayer(UUID.fromString(placer));
+
                 Location location = new Location(world, blockX, blockY, blockZ);
-                LightBlock block = new LightBlock(item, location);
+                LightBlock block = new LightBlock(item, location, player);
 
                 // Entity can be null if someone manually destroyed it
                 String itemDisplayUUID = rs.getString("entityUUID");

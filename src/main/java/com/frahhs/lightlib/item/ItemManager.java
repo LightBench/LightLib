@@ -1,6 +1,7 @@
 package com.frahhs.lightlib.item;
 
 import com.frahhs.lightlib.LightPlugin;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
@@ -100,6 +101,9 @@ public class ItemManager {
      */
     public LightItem get(ItemStack itemStack) {
         if(itemStack == null)
+            return null;
+
+        if(itemStack.getType().equals(Material.AIR))
             return null;
 
         for (LightItem curItem : lightItems.values()) {

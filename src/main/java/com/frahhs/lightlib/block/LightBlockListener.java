@@ -33,7 +33,7 @@ public class LightBlockListener extends LightListener {
             return;
 
         // Instance of the Light block.
-        LightBlock block = new LightBlock(lightItem, e.getBlock().getLocation().clone());
+        LightBlock block = new LightBlock(lightItem, e.getBlock().getLocation().clone(), e.getPlayer());
 
         // Do the place action.
         block.place(e.getPlayer());

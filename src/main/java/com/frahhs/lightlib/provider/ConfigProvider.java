@@ -134,6 +134,23 @@ public class ConfigProvider {
     }
 
     /**
+     * Retrieves the integer value associated with the given path from the config map.
+     *
+     * @param path The path of the value to retrieve.
+     * @return The integer value associated with the given path.
+     * @throws ClassCastException If the value at the given path is not an integer.
+     */
+    public double getDouble(String path) {
+        if (!pathExist(path))
+            LightPlugin.getLightLogger().error(String.format("The config path '%s' does not exist.", path));
+
+        Object value = config.get(path);
+        if (!(value instanceof Double))
+            throw new ClassCastException(String.format("Value at '%s' is not an Double but is a %s.", path, value.getClass().toString()));
+        return (double) value;
+    }
+
+    /**
      * Retrieves the string value associated with the given path from the config map.
      *
      * @param path The path of the value to retrieve.

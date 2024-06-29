@@ -54,6 +54,7 @@ public class FeatureManager {
             for (LightFeature feature : features.values()) {
                 LightPlugin.getLightLogger().finer("Enabling %s feature", feature.getID());
                 feature.onEnable();
+                feature.registerItems(plugin);
             }
         } catch (Error e) {
             LightPlugin.getLightLogger().error("Error while enabling a feature.\nStackTrace: \n%s", e.getMessage());
