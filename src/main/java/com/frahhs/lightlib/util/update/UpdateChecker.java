@@ -86,7 +86,7 @@ public class UpdateChecker implements Listener {
             logger.warning("Your actual version is: " + ConsoleColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ConsoleColor.YELLOW + "." );
             if(LightPlugin.getOptions().getSpigotMarketID() != null) {
                 logger.warning("Download at:");
-                logger.warning("https://www.spigotmc.org/resources/LightPlugin%s/", LightPlugin.getOptions().getSpigotMarketID());
+                logger.warning("https://www.spigotmc.org/resources/%s/", LightPlugin.getOptions().getSpigotMarketID());
             }
             logger.warning("=====================================================");
         }
