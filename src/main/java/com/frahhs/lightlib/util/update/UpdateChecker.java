@@ -52,14 +52,18 @@ public class UpdateChecker implements Listener {
         if(UpdateChecker.isAvailable && config.getBoolean("update-check")) {
             if(event.getPlayer().hasPermission(LightPlugin.getOptions().getPermissionPrefix() + ".admin")) {
                 String prefix = LightPlugin.getMessagesProvider().getPrefix();
-                String message =
-                    prefix + ChatColor.DARK_GREEN + "New version of LightPlugin is out!\n" +
-                    prefix + ChatColor.DARK_GREEN + "New version is: " + ChatColor.GOLD + getNewVersion() + ChatColor.DARK_GREEN + ".\n" +
-                    prefix + ChatColor.DARK_GREEN + "Your actual version is: " + ChatColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ChatColor.DARK_GREEN + ".\n" +
-                    prefix + ChatColor.DARK_GREEN + "Download at: \n" +
-                    prefix + ChatColor.DARK_GREEN + "https://www.spigotmc.org/resources/LightPlugin.117484/";
+                StringBuilder builder = new StringBuilder();
 
-                event.getPlayer().sendMessage(message);
+                builder .append(prefix + ChatColor.DARK_GREEN + "New version of " + LightPlugin.getInstance().getDescription().getName() + " is out!\n")
+                        .append(prefix + ChatColor.DARK_GREEN + "New version is: " + ChatColor.GOLD + getNewVersion() + ChatColor.DARK_GREEN + ".\n")
+                        .append(prefix + ChatColor.DARK_GREEN + "Your actual version is: " + ChatColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ChatColor.DARK_GREEN + ".\n");
+
+                if(LightPlugin.getOptions().getSpigotMarketID() != null) {
+                    builder .append(prefix + ChatColor.DARK_GREEN + "Download at: \n")
+                            .append(prefix + ChatColor.DARK_GREEN + "https://www.spigotmc.org/resources/" + LightPlugin.getOptions().getSpigotMarketID());
+                }
+
+                event.getPlayer().sendMessage(builder.toString());
             }
         }
     }
@@ -77,11 +81,13 @@ public class UpdateChecker implements Listener {
         if(UpdateChecker.isAvailable && config.getBoolean("update-check")) {
             LightLogger logger = LightPlugin.getLightLogger();
             logger.warning("=====================================================");
-            logger.warning("New version of LightPlugin is out!");
+            logger.warning("New version of %s is out!", LightPlugin.getInstance().getDescription().getName());
             logger.warning("New version is: " + ConsoleColor.DARK_GREEN + getNewVersion() + ConsoleColor.YELLOW + ".");
             logger.warning("Your actual version is: " + ConsoleColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ConsoleColor.YELLOW + "." );
-            logger.warning("Download at:");
-            logger.warning("https://www.spigotmc.org/resources/LightPlugin.117484/");
+            if(LightPlugin.getOptions().getSpigotMarketID() != null) {
+                logger.warning("Download at:");
+                logger.warning("https://www.spigotmc.org/resources/LightPlugin%s/", LightPlugin.getOptions().getSpigotMarketID());
+            }
             logger.warning("=====================================================");
         }
     }

@@ -119,13 +119,15 @@ public class LightBlock extends LightProvider {
             direction = 270;
         }
 
-        Location location = this.location.clone().getBlock().getLocation().add(0.5, 0.5, 0.5);
+        Location location = this.location.clone();
+        location.add(0.5, 0.5, 0.5);
         location.setYaw(direction + 180);
 
         assert location.getWorld() != null;
         final ItemDisplay itemDisplay = location.getWorld().spawn(location, ItemDisplay.class);
 
         itemDisplay.setItemStack(item.getItemStack());
+        itemDisplay.setPersistent(true);
         itemDisplay.setBrightness(new Display.Brightness(15, 15));
         setItemDisplay(itemDisplay);
 
