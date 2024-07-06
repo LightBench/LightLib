@@ -8,10 +8,10 @@ public class LightObject {
     protected final LightPlugin plugin = LightPlugin.getInstance();
 
     /** Configuration manager instance. */
-    protected final ConfigProvider config = plugin.getConfigProvider();
+    protected final ConfigProvider config = LightPlugin.getConfigProvider();
 
     /** Messages manager instance. */
-    protected final MessagesProvider messages = plugin.getMessagesProvider();
+    protected final MessagesProvider messages = LightPlugin.getMessagesProvider();
 
     /** Logger instance. */
     protected final LightLogger logger = LightPlugin.getLightLogger();

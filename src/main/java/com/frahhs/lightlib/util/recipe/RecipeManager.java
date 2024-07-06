@@ -25,7 +25,7 @@ public class RecipeManager {
     }
 
     public void saveRecipe(LightItem item, ShapedRecipe recipe) throws SQLException {
-        LightPlugin.getLightLogger().fine("Saving %s shaped recipe", item.getName());
+        LightPlugin.getLightLogger().fine("Saving %s shaped recipe...", item.getName());
 
         String sql = "REPLACE INTO ShapedRecipe (item, pattern, ingredients) VALUES (?, ?, ?)";
         PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -42,10 +42,11 @@ public class RecipeManager {
         pstmt.setString(3, ingredients.toString());
         pstmt.executeUpdate();
         pstmt.close();
+        LightPlugin.getLightLogger().fine("Saved %s shaped recipe!", item.getName());
     }
 
     public ShapedRecipe loadRecipe(LightItem item) throws SQLException {
-        LightPlugin.getLightLogger().fine("Loading %s shaped recipe", item.getName());
+        LightPlugin.getLightLogger().fine("Loading %s shaped recipe...", item.getName());
 
         String sql = "SELECT * FROM ShapedRecipe WHERE item = ?";
         PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -76,12 +77,14 @@ public class RecipeManager {
             // Close resources
             rs.close();
             pstmt.close();
+            LightPlugin.getLightLogger().fine("Loaded %s shaped recipe!", item.getName());
             return recipe;
         }
 
         // Close resources
         rs.close();
         pstmt.close();
+        LightPlugin.getLightLogger().fine("shaped recipe for item %s not found!", item.getName());
         return null;
     }
 

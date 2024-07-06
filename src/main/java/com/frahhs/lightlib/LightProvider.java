@@ -6,8 +6,8 @@ import java.sql.Connection;
 
 public class LightProvider extends LightObject{
     /** The database connection. */
-    protected final Connection dbConnection = plugin.getLightDatabase().getConnection();
+    protected final Connection dbConnection = LightPlugin.getLightDatabase().getConnection();
 
     /** The bag manager for managing data bags. */
-    protected final BagManager bagManager = plugin.getBagManager();
+    protected final BagManager bagManager = LightPlugin.getBagManager();
 }
