@@ -51,9 +51,9 @@ public class ItemManager {
         if (lightItem.isCraftable()) {
             LightPlugin.getLightLogger().fine("Adding %s shaped recipe...", lightItem.getName());
             plugin.getServer().addRecipe(lightItem.getShapedRecipe(plugin));
-            LightPlugin.getLightLogger().fine("Added %s shaped recipe!", lightItem.getName());
+            LightPlugin.getLightLogger().fine("Added %s shaped recipe.", lightItem.getName());
         }
-        LightPlugin.getLightLogger().fine("Registered %s custom item!", lightItem.getName());
+        LightPlugin.getLightLogger().fine("Registered %s custom item.", lightItem.getName());
     }
 
     /**
@@ -65,9 +65,9 @@ public class ItemManager {
             if (lightItems.get(key).isCraftable()) {
                 LightPlugin.getLightLogger().fine("Removing %s shaped recipe...", lightItems.get(key).getName());
                 plugin.getServer().removeRecipe(lightItems.get(key).getNamespacedKey());
-                LightPlugin.getLightLogger().fine("Removed %s shaped recipe!", lightItems.get(key).getName());
+                LightPlugin.getLightLogger().fine("Removed %s shaped recipe.", lightItems.get(key).getName());
             }
-            LightPlugin.getLightLogger().fine("Disposed %s custom item!", lightItems.get(key).getName());
+            LightPlugin.getLightLogger().fine("Disposed %s custom item.", lightItems.get(key).getName());
         }
         lightItems.clear();
     }
@@ -82,11 +82,11 @@ public class ItemManager {
         LightPlugin.getLightLogger().finer("Trying to get custom item by %s class...", itemClass.toString());
         for (LightItem item : lightItems.values()) {
             if (item.getClass().equals(itemClass)) {
-                LightPlugin.getLightLogger().finer("Found %s custom item!", item.getName());
+                LightPlugin.getLightLogger().finer("Found %s custom item.", item.getName());
                 return item;
             }
         }
-        LightPlugin.getLightLogger().finer("Custom item with %s class not found!", itemClass.toString());
+        LightPlugin.getLightLogger().finer("Custom item with %s class not found.", itemClass.toString());
         return null;
     }
 
@@ -100,11 +100,11 @@ public class ItemManager {
         LightPlugin.getLightLogger().finer("Trying to get custom item by %s identifier...", identifier);
         for (LightItem item : lightItems.values()) {
             if (item.getIdentifier().equals(identifier)) {
-                LightPlugin.getLightLogger().finer("Found %s custom item!", item.getName());
+                LightPlugin.getLightLogger().finer("Found %s custom item.", item.getName());
                 return item;
             }
         }
-        LightPlugin.getLightLogger().finer("Custom item with %s identifier not found!", identifier);
+        LightPlugin.getLightLogger().finer("Custom item with %s identifier not found.", identifier);
         return null;
     }
 
@@ -130,11 +130,11 @@ public class ItemManager {
             ItemStack item1 = clean(itemStack);
             ItemStack item2 = clean(curItem.getItemStack());
             if(item1.isSimilar(item2)) {
-                LightPlugin.getLightLogger().finer("Found %s custom item!", curItem.getName());
+                LightPlugin.getLightLogger().finer("Found %s custom item.", curItem.getName());
                 return curItem;
             }
         }
-        LightPlugin.getLightLogger().finer("Custom item with %s ItemStack not found!", itemStack);
+        LightPlugin.getLightLogger().finer("Custom item with %s ItemStack not found.", itemStack);
         return null;
     }
 

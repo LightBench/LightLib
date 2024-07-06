@@ -42,7 +42,7 @@ public class RecipeManager {
         pstmt.setString(3, ingredients.toString());
         pstmt.executeUpdate();
         pstmt.close();
-        LightPlugin.getLightLogger().fine("Saved %s shaped recipe!", item.getName());
+        LightPlugin.getLightLogger().fine("Saved %s shaped recipe.", item.getName());
     }
 
     public ShapedRecipe loadRecipe(LightItem item) throws SQLException {
@@ -77,14 +77,14 @@ public class RecipeManager {
             // Close resources
             rs.close();
             pstmt.close();
-            LightPlugin.getLightLogger().fine("Loaded %s shaped recipe!", item.getName());
+            LightPlugin.getLightLogger().fine("Loaded %s shaped recipe.", item.getName());
             return recipe;
         }
 
         // Close resources
         rs.close();
         pstmt.close();
-        LightPlugin.getLightLogger().fine("shaped recipe for item %s not found!", item.getName());
+        LightPlugin.getLightLogger().fine("Custom shaped recipe for item %s not found.", item.getName());
         return null;
     }
 

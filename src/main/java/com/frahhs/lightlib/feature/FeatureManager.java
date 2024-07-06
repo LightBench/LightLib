@@ -35,7 +35,7 @@ public class FeatureManager {
         feature.registerEvents(plugin);
         feature.registerBags(plugin);
         feature.onEnable();
-        LightPlugin.getLightLogger().fine("Registered %s feature!", feature.getID());
+        LightPlugin.getLightLogger().fine("Registered %s feature.", feature.getID());
     }
 
     /**
@@ -57,7 +57,7 @@ public class FeatureManager {
                 LightPlugin.getLightLogger().fine("Enabling %s feature...", feature.getID());
                 feature.onEnable();
                 feature.registerItems(plugin);
-                LightPlugin.getLightLogger().fine("Enabled %s feature!", feature.getID());
+                LightPlugin.getLightLogger().fine("Enabled %s feature.", feature.getID());
             }
         } catch (Error e) {
             LightPlugin.getLightLogger().error("Error while enabling a feature.\nStackTrace: \n%s", e.getMessage());
@@ -72,7 +72,7 @@ public class FeatureManager {
             for (LightFeature feature : features.values()) {
                 LightPlugin.getLightLogger().finer("Disabling %s feature...", feature.getID());
                 feature.onDisable();
-                LightPlugin.getLightLogger().finer("Disabled %s feature!", feature.getID());
+                LightPlugin.getLightLogger().finer("Disabled %s feature.", feature.getID());
             }
         } catch (Exception e) {
             LightPlugin.getLightLogger().error("Error while disabling a feature.\nStackTrace: \n%s", e.getMessage());

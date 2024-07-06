@@ -11,6 +11,7 @@ import com.frahhs.lightlib.provider.MessagesProvider;
 import com.frahhs.lightlib.util.bag.BagManager;
 import com.frahhs.lightlib.util.logging.LightLogger;
 import com.frahhs.lightlib.util.update.UpdateChecker;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;

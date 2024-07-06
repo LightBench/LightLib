@@ -116,8 +116,10 @@ public abstract class LightItem extends LightObject {
             LightPlugin.getLightLogger().error("Error while selecting the recipe of %s from the database\n%s", getName(), e);
         }
 
-        if(shapedRecipe == null)
+        if(shapedRecipe == null) {
+            LightPlugin.getLightLogger().fine("Using default recipe for item %s.", getName());
             return getDefaultShapedRecipe();
+        }
 
         return shapedRecipe;
     }
