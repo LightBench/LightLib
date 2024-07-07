@@ -1,5 +1,7 @@
 package com.frahhs.lightlib.util;
 
+import com.frahhs.lightlib.LightPlugin;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,8 +68,6 @@ public abstract class FileUtil {
             while ((len = bis.read(buffer)) != -1) {
                 gzipOut.write(buffer, 0, len);
             }
-
-            System.out.println("Compression completed successfully: " + outputFile.getAbsolutePath());
         }
     }
 }

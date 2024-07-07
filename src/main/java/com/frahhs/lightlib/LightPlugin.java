@@ -39,6 +39,8 @@ public abstract class LightPlugin extends JavaPlugin {
     public abstract void onLightEnabled();
     public abstract void onLightDisabled();
 
+    public void onLightReload() {};
+
     @Override
     public void onEnable() {
         instance = this;
@@ -90,19 +92,24 @@ public abstract class LightPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Disable features
-        featureManager.disableFeatures();
+        if(featureManager != null)
+            featureManager.disableFeatures();
 
         // Dispose items
-        itemManager.dispose();
+        if(itemManager != null)
+            itemManager.dispose();
 
         // Disable database
-        databaseManager.disable();
+        if(databaseManager != null)
+            databaseManager.disable();
 
         // Disable bags
-        bagManager.disableBags();
+        if(bagManager != null)
+            bagManager.disableBags();
 
         // Close logger
-        logger.close();
+        if(logger != null)
+            logger.close();
 
         onLightDisabled();
     }
@@ -128,6 +135,8 @@ public abstract class LightPlugin extends JavaPlugin {
         // Feature
         featureManager.disableFeatures();
         featureManager.enableFeatures();
+
+        onLightReload();
     }
 
     public static LightPlugin getInstance() {

@@ -237,7 +237,7 @@ public class MessagesProvider {
                     }
                 }
             } catch (IOException | RuntimeException e) {
-                LightPlugin.getLightLogger().warning("Error while trying to update language files, be sure to have the latest version of the plugin installed.");
+                LightPlugin.getLightLogger().warning("Error while trying to update language files, be sure to have the latest version of the plugin installed.", e);
             }
         }
 
