@@ -25,13 +25,39 @@ public class BagManager {
      * @param bag The bag to register.
      */
     public void registerBags(Bag bag) {
+        LightPlugin.getLightLogger().fine("Registering bag %s...", bag.getID());
+
         if(bags.containsKey(bag.getID())) {
-            LightPlugin.getLightLogger().error("Duplicate bag id: %s", bag.getID());
+            LightPlugin.getLightLogger().error("Duplicate bag id: %s.", bag.getID());
             throw new BagAlreadyDefinedException();
         }
 
         bags.put(bag.getID(), bag);
+        LightPlugin.getLightLogger().fine("Registered bag %s.", bag.getID());
+
+
         bag.onEnable();
+        LightPlugin.getLightLogger().fine("Enabled bag %s.", bag.getID());
+    }
+
+    /**
+     * Registers a bag.
+     *
+     * @param bag The bag to register.
+     */
+    public void unregisterBags(Bag bag) {
+        LightPlugin.getLightLogger().fine("Unregistering bag %s...", bag.getID());
+
+        if(!bags.containsKey(bag.getID())) {
+            LightPlugin.getLightLogger().warning("Tried to unregister the bag %s,but it was not registered, please report.", bag.getID());
+            return;
+        }
+
+        bag.onDisable();
+        LightPlugin.getLightLogger().fine("Disabled bag %s.", bag.getID());
+
+        bags.remove(bag.getID(), bag);
+        LightPlugin.getLightLogger().fine("Unregistered bag %s.", bag.getID());
     }
 
     /**
@@ -42,6 +68,15 @@ public class BagManager {
      */
     public Bag getBag(String id) {
         return bags.get(id);
+    }
+
+    /**
+     * Retrieves a bag by its ID.
+     *
+     * @return The bag corresponding to the ID.
+     */
+    public Map<String, Bag> getRegisteredBags() {
+        return new HashMap<>(bags);
     }
 
     /**

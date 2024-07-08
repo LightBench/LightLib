@@ -35,11 +35,11 @@ public abstract class LightPlugin extends JavaPlugin {
     // Options
     private static LightOptions options;
 
-    public abstract void onLightLoad();
+    public void onLightLoad() {}
+    public void onLightReload() {};
+
     public abstract void onLightEnabled();
     public abstract void onLightDisabled();
-
-    public void onLightReload() {};
 
     @Override
     public void onEnable() {
