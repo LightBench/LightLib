@@ -1,15 +1,14 @@
 package com.frahhs.lightlib.util.update;
 
+import com.frahhs.lightlib.LightListener;
 import com.frahhs.lightlib.LightPlugin;
-import com.frahhs.lightlib.provider.ConfigProvider;
 import com.frahhs.lightlib.util.logging.ConsoleColor;
 import com.frahhs.lightlib.util.logging.LightLogger;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.simpleyaml.configuration.file.YamlFile;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public class UpdateChecker implements Listener {
+public class UpdateChecker extends LightListener {
     private final String url = "https://api.spigotmc.org/legacy/update.php?resource=";
     private static String id;
 
@@ -32,7 +31,7 @@ public class UpdateChecker implements Listener {
         this.id = id;
     }
 
-    public void enable(JavaPlugin plugin) {
+    public void enable(LightPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -42,7 +41,7 @@ public class UpdateChecker implements Listener {
 
     @EventHandler
     public void onAdminJoin(PlayerJoinEvent event) {
-        ConfigProvider config = LightPlugin.getConfigProvider();
+        YamlFile config = plugin.getYamlConfig();
 
         // Check if new version is out
         if(config.getBoolean("update-check")) {
@@ -50,17 +49,17 @@ public class UpdateChecker implements Listener {
         }
 
         if(UpdateChecker.isAvailable && config.getBoolean("update-check")) {
-            if(event.getPlayer().hasPermission(LightPlugin.getOptions().getPermissionPrefix() + ".admin")) {
-                String prefix = LightPlugin.getMessagesProvider().getPrefix();
+            if(event.getPlayer().hasPermission(plugin.getOptions().getPermissionPrefix() + ".admin")) {
+                String prefix = plugin.getMessagesProvider().getPrefix();
                 StringBuilder builder = new StringBuilder();
 
                 builder .append(prefix + ChatColor.DARK_GREEN + "New version of " + LightPlugin.getInstance().getDescription().getName() + " is out!\n")
                         .append(prefix + ChatColor.DARK_GREEN + "New version is: " + ChatColor.GOLD + getNewVersion() + ChatColor.DARK_GREEN + ".\n")
                         .append(prefix + ChatColor.DARK_GREEN + "Your actual version is: " + ChatColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ChatColor.DARK_GREEN + ".\n");
 
-                if(LightPlugin.getOptions().getSpigotMarketID() != null) {
+                if(plugin.getOptions().getSpigotMarketID() != null) {
                     builder .append(prefix + ChatColor.DARK_GREEN + "Download at: \n")
-                            .append(prefix + ChatColor.DARK_GREEN + "https://www.spigotmc.org/resources/" + LightPlugin.getOptions().getSpigotMarketID());
+                            .append(prefix + ChatColor.DARK_GREEN + "https://www.spigotmc.org/resources/" + plugin.getOptions().getSpigotMarketID());
                 }
 
                 event.getPlayer().sendMessage(builder.toString());
@@ -70,7 +69,7 @@ public class UpdateChecker implements Listener {
 
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
-        ConfigProvider config = LightPlugin.getConfigProvider();
+        YamlFile config = plugin.getYamlConfig();
 
         // Check if new version is out
         if(config.getBoolean("update-check")) {
@@ -84,9 +83,9 @@ public class UpdateChecker implements Listener {
             logger.warning("New version of %s is out!", LightPlugin.getInstance().getDescription().getName());
             logger.warning("New version is: " + ConsoleColor.DARK_GREEN + getNewVersion() + ConsoleColor.YELLOW + ".");
             logger.warning("Your actual version is: " + ConsoleColor.RED + LightPlugin.getInstance().getDescription().getVersion() + ConsoleColor.YELLOW + "." );
-            if(LightPlugin.getOptions().getSpigotMarketID() != null) {
+            if(plugin.getOptions().getSpigotMarketID() != null) {
                 logger.warning("Download at:");
-                logger.warning("https://www.spigotmc.org/resources/%s/", LightPlugin.getOptions().getSpigotMarketID());
+                logger.warning("https://www.spigotmc.org/resources/%s/", plugin.getOptions().getSpigotMarketID());
             }
             logger.warning("=====================================================");
         }

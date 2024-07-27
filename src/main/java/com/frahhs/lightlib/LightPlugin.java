@@ -7,23 +7,26 @@ import com.frahhs.lightlib.feature.FeatureManager;
 import com.frahhs.lightlib.gui.GUIListener;
 import com.frahhs.lightlib.item.ItemManager;
 import com.frahhs.lightlib.provider.ConfigProvider;
-import com.frahhs.lightlib.provider.MessagesProvider;
+import com.frahhs.lightlib.provider.Localization;
 import com.frahhs.lightlib.util.bag.BagManager;
 import com.frahhs.lightlib.util.logging.LightLogger;
 import com.frahhs.lightlib.util.update.UpdateChecker;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.simpleyaml.configuration.comments.format.YamlCommentFormatter;
+import org.simpleyaml.configuration.file.YamlFile;
 
+import java.util.Locale;
 import java.util.logging.Level;
 
 public abstract class LightPlugin extends JavaPlugin {
     private static LightPlugin instance;
+    private static Locale locale;
 
     private static LightLogger logger;
 
     // Providers
     private static ConfigProvider configProvider;
-    private static MessagesProvider messagesProvider;
+    private static Localization Localization;
 
     // Managers
     private static DatabaseManager databaseManager;
@@ -35,6 +38,7 @@ public abstract class LightPlugin extends JavaPlugin {
     // Options
     private static LightOptions options;
 
+    public void configure() {}
     public void onLightLoad() {}
     public void onLightReload() {};
 
@@ -42,17 +46,36 @@ public abstract class LightPlugin extends JavaPlugin {
     public abstract void onLightDisabled();
 
     @Override
+    public void onLoad() {
+        options = new LightOptions();
+
+        configProvider = new ConfigProvider(this);
+        YamlFile config = configProvider.getConfig();
+        YamlCommentFormatter commentFormatter = config.options().commentFormatter();
+        commentFormatter.blockFormatter().prefix("\n\n");
+        configProvider.read();
+        baseConfig();
+        configProvider.save();
+
+        configure();
+
+        onLightLoad();
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
 
-        configProvider = new ConfigProvider(this);
+        // Set client locale
+        Locale.setDefault(Locale.ENGLISH);
+        locale = Locale.of(configProvider.getConfig().getString("language"));
 
         // Enable logger
         logger = new LightLogger(this.getName(), this);
         logger.setLevel(Level.INFO);
 
         // Enable managers
-        messagesProvider = new MessagesProvider(this);
+        Localization = new Localization(this);
 
         itemManager = new ItemManager(this);
         commandManager  = new PaperCommandManager(this);
@@ -62,12 +85,12 @@ public abstract class LightPlugin extends JavaPlugin {
         // Enable Database connection
         databaseManager = new DatabaseManager(
                 this,
-                configProvider.getString("database.database-name"),
-                configProvider.getString("database.mysql.address"),
-                configProvider.getString("database.mysql.port"),
-                configProvider.getString("database.mysql.username"),
-                configProvider.getString("database.mysql.password"),
-                configProvider.getString("database.type")
+                configProvider.getConfig().getString("database.database-name"),
+                configProvider.getConfig().getString("database.mysql.address"),
+                configProvider.getConfig().getString("database.mysql.port"),
+                configProvider.getConfig().getString("database.mysql.username"),
+                configProvider.getConfig().getString("database.mysql.password"),
+                configProvider.getConfig().getString("database.type")
         );
 
         getServer().getPluginManager().registerEvents(new LightBlockListener(),this);
@@ -83,9 +106,10 @@ public abstract class LightPlugin extends JavaPlugin {
         }
 
         onLightEnabled();
+        configProvider.save();
 
         // Disable plugin if is disabled in the config
-        if(!configProvider.getBoolean("enabled"))
+        if(!configProvider.getConfig().getBoolean("enabled"))
             this.getPluginLoader().disablePlugin(this);
     }
 
@@ -114,16 +138,10 @@ public abstract class LightPlugin extends JavaPlugin {
         onLightDisabled();
     }
 
-    @Override
-    public void onLoad() {
-        options = new LightOptions();
-        onLightLoad();
-    }
-
     public void onReload() {
         // Config and messages providers
-        configProvider.reload();
-        messagesProvider.reload();
+        configProvider.read();
+        Localization.reload();
 
         // Item
         itemManager.dispose();
@@ -137,6 +155,28 @@ public abstract class LightPlugin extends JavaPlugin {
         featureManager.enableFeatures();
 
         onLightReload();
+    }
+
+    private void baseConfig() {
+        YamlFile config = getYamlConfig();
+        config.addDefault("enabled", true);
+        config.addDefault("update-check", true);
+        config.addDefault("language", "en");
+        config.addDefault("prefix", "§3[§6Robbing§3] §f");
+        config.addDefault("database.type", "SQLite");
+        config.addDefault("database.database-name", "LightDB");
+        config.addDefault("database.mysql.address", "localhost");
+        config.addDefault("database.mysql.port", "3306");
+        config.addDefault("database.mysql.username", "");
+        config.addDefault("database.mysql.password", "");
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale newLocale) {
+        locale = newLocale;
     }
 
     public static LightPlugin getInstance() {
@@ -157,17 +197,17 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the ConfigProvider
      */
-    public static ConfigProvider getConfigProvider() {
-        return configProvider;
+    public YamlFile getYamlConfig() {
+        return configProvider.getConfig();
     }
 
     /**
-     * Will retrieve the MessagesProvider
+     * Will retrieve the Localization
      *
-     * @return the MessagesProvider
+     * @return the Localization
      */
-    public static MessagesProvider getMessagesProvider() {
-        return messagesProvider;
+    public Localization getMessagesProvider() {
+        return Localization;
     }
 
     /**
@@ -175,7 +215,7 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the DatabaseManager
      */
-    public static DatabaseManager getLightDatabase() {
+    public DatabaseManager getLightDatabase() {
         return databaseManager;
     }
 
@@ -184,7 +224,7 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the BagManager
      */
-    public static BagManager getBagManager() {
+    public BagManager getBagManager() {
         return bagManager;
     }
 
@@ -193,7 +233,7 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the ItemManager
      */
-    public static ItemManager getItemsManager() {
+    public ItemManager getItemsManager() {
         return itemManager;
     }
 
@@ -202,7 +242,7 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the FeatureManager
      */
-    public static FeatureManager getFeatureManager() {
+    public FeatureManager getFeatureManager() {
         return featureManager;
     }
 
@@ -211,7 +251,7 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the PaperCommandManager
      */
-    public static PaperCommandManager getCommandManager() {
+    public PaperCommandManager getCommandManager() {
         return commandManager;
     }
 
@@ -220,7 +260,7 @@ public abstract class LightPlugin extends JavaPlugin {
      *
      * @return the LightOptions
      */
-    public static LightOptions getOptions() {
+    public LightOptions getOptions() {
         return options;
     }
 }

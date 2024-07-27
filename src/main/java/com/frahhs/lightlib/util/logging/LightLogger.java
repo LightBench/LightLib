@@ -1,7 +1,7 @@
 package com.frahhs.lightlib.util.logging;
 
+import com.frahhs.lightlib.LightPlugin;
 import com.frahhs.lightlib.util.FileUtil;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Provides logging functionalities for the plugin.
  */
 public class LightLogger extends Logger {
-    private final JavaPlugin plugin;
+    private final LightPlugin plugin;
 
     private File logDirectory;
     private FileHandler fileHandler;
@@ -34,9 +34,9 @@ public class LightLogger extends Logger {
     /**
      * Constructs a new LightLogger instance.
      *
-     * @param plugin The JavaPlugin instance associated with this logger.
+     * @param plugin The LightPlugin instance associated with this logger.
      */
-    public LightLogger(String name, JavaPlugin plugin) {
+    public LightLogger(String name, LightPlugin plugin) {
         super(name, null);
         this.plugin = plugin;
         super.setLevel(Level.ALL);

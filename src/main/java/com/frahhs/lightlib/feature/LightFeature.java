@@ -5,7 +5,6 @@ import com.frahhs.lightlib.LightPlugin;
 import com.frahhs.lightlib.item.LightItem;
 import com.frahhs.lightlib.util.bag.Bag;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,6 +19,8 @@ public abstract class LightFeature {
     protected List<LightItem> itemsList = new ArrayList<>();
     protected List<LightFeature> subFeatures = new ArrayList<>();
 
+    protected FeatureConfig config;
+
     /**
      * Called when the feature is enabled.
      */
@@ -32,26 +33,28 @@ public abstract class LightFeature {
 
     /**
      * Registers sub features for the current feature.
-     * <p>
-     * The sub feature should extend the parent feature in order to
-     * correctly handle the feature life.
      */
-    protected abstract void registerSubFeature(JavaPlugin plugin);
+    protected abstract void registerSubFeature(LightPlugin plugin);
 
     /**
      * Registers items for the feature.
      */
-    protected abstract void registerItems(JavaPlugin plugin);
+    protected abstract void registerItems(LightPlugin plugin);
 
     /**
      * Registers bags for the feature.
      */
-    protected abstract void registerBags(JavaPlugin plugin);
+    protected abstract void registerBags(LightPlugin plugin);
 
     /**
      * Registers events for the feature.
      */
-    protected abstract void registerEvents(JavaPlugin plugin);
+    protected abstract void registerEvents(LightPlugin plugin);
+
+    /**
+     * Handle configuration.
+     */
+    protected abstract void configure();
 
     /**
      * Retrieves the ID of the feature.
@@ -61,37 +64,45 @@ public abstract class LightFeature {
     @NotNull
     protected abstract String getID();
 
-    void unregisterSubFeatures(JavaPlugin plugin) {
+    void setFeatureConfig(FeatureConfig featureConfig) {
+        this.config = featureConfig;
+    }
+
+    FeatureConfig getFeatureConfig() {
+        return config;
+    }
+
+    void unregisterSubFeatures(LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Unregistering sub features for the feature %s...", getID());
 
         for(LightFeature subFeature : subFeatures) {
-            LightPlugin.getFeatureManager().registerFeatures(subFeature, plugin);
+            plugin.getFeatureManager().registerFeatures(subFeature, plugin);
         }
 
         LightPlugin.getLightLogger().fine("Unregistered sub features for the feature %s.", getID());
     }
 
-    void unregisterItems(JavaPlugin plugin) {
+    void unregisterItems(LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Unregistering items for the feature %s...", getID());
 
         for(LightItem item : itemsList) {
-            LightPlugin.getItemsManager().unregisterItems(item, plugin);
+            plugin.getItemsManager().unregisterItems(item, plugin);
         }
 
         LightPlugin.getLightLogger().fine("Unregistered items for the feature %s.", getID());
     }
 
-    void unregisterBags(JavaPlugin plugin) {
+    void unregisterBags(LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Unregistering bags for the feature %s...", getID());
 
         for(Bag bag : bagsList) {
-            LightPlugin.getBagManager().unregisterBags(bag);
+            plugin.getBagManager().unregisterBags(bag);
         }
 
         LightPlugin.getLightLogger().fine("Unregistered bags for the feature %s.", getID());
     }
 
-    void unregisterEvents(JavaPlugin plugin) {
+    void unregisterEvents(LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Unregistering listeners for the feature %s...", getID());
 
         for(LightListener event : eventsList) {

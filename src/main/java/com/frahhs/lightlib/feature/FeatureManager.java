@@ -2,9 +2,10 @@ package com.frahhs.lightlib.feature;
 
 import com.frahhs.lightlib.LightListener;
 import com.frahhs.lightlib.LightPlugin;
+import com.frahhs.lightlib.feature.exception.FeatureException;
 import com.frahhs.lightlib.item.LightItem;
 import com.frahhs.lightlib.util.bag.Bag;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +32,43 @@ public class FeatureManager {
      *
      * @param feature The feature to register.
      */
-    public void registerFeatures(LightFeature feature, JavaPlugin plugin) {
-        LightPlugin.getLightLogger().fine("Registering %s feature...", feature.getID());
+    public void registerFeatures(LightFeature feature, LightPlugin plugin) {
+        registerFeatures(feature, null, plugin);
+    }
+
+    /**
+     * Registers a feature with the manager.
+     *
+     * @param feature The feature to register.
+     */
+    void registerFeatures(LightFeature feature, @Nullable LightFeature parent, LightPlugin plugin) {
+        plugin.getLightLogger().fine("Registering %s feature...", feature.getID());
+
+        if(parent != null) {
+            if (feature.getClass() == parent.getClass()) {
+                throw new FeatureException(String.format("The feature %s is trying to declare itself as sub feature.", feature.getID()));
+            }
+        }
+
+        // Setup feature configuration
+        FeatureConfig featureConfig;
+        if(parent == null) {
+            featureConfig = new FeatureConfig(feature, plugin);
+        } else {
+            featureConfig = new FeatureConfig(feature, plugin, parent.getFeatureConfig());
+        }
+
+        // Set the feature configuration
+        feature.setFeatureConfig(featureConfig);
+
+        // Update the configuration
+        feature.configure();
 
         // Register feature parameters
-        feature.registerItems(plugin);
-        feature.registerEvents(plugin);
-        feature.registerBags(plugin);
         feature.registerSubFeature(plugin);
+        feature.registerItems(plugin);
+        feature.registerBags(plugin);
+        feature.registerEvents(plugin);
 
         // Enable the feature
         feature.onEnable();
@@ -54,7 +84,7 @@ public class FeatureManager {
      *
      * @param feature The feature to unregister.
      */
-    public void unregisterFeatures(LightFeature feature, JavaPlugin plugin) {
+    public void unregisterFeatures(LightFeature feature, LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Unregistering %s feature...", feature.getID());
 
         // Disable the feature
@@ -119,16 +149,16 @@ public class FeatureManager {
 
     public void registerFeatureBags(Bag bag, LightFeature feature) {
         feature.bagsList.add(bag);
-        LightPlugin.getBagManager().registerBags(bag);
+        plugin.getBagManager().registerBags(bag);
     }
 
     public void registerFeatureItems(LightItem item, LightFeature feature) {
         feature.itemsList.add(item);
-        LightPlugin.getItemsManager().registerItems(item, plugin);
+        plugin.getItemsManager().registerItems(item, plugin);
     }
 
     public void registerFeatureSubFeatures(LightFeature subFeature, LightFeature feature) {
         feature.subFeatures.add(subFeature);
-        registerFeatures(subFeature, plugin);
+        registerFeatures(subFeature, feature, plugin);
     }
 }

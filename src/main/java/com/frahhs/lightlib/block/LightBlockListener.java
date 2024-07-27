@@ -1,7 +1,6 @@
 package com.frahhs.lightlib.block;
 
 import com.frahhs.lightlib.LightListener;
-import com.frahhs.lightlib.LightPlugin;
 import com.frahhs.lightlib.block.events.LightBlockBreakEvent;
 import com.frahhs.lightlib.block.events.LightBlockInteractEvent;
 import com.frahhs.lightlib.block.events.LightBlockPlaceEvent;
@@ -18,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public class LightBlockListener extends LightListener {
     @EventHandler
     public void onPlace(BlockPlaceEvent e) {
-        ItemManager itemManager = LightPlugin.getItemsManager();
+        ItemManager itemManager = plugin.getItemsManager();
         ItemStack item = e.getItemInHand();
 
         // Check if is a Light item.
@@ -55,7 +54,7 @@ public class LightBlockListener extends LightListener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
-        ItemManager itemManager = LightPlugin.getItemsManager();
+        ItemManager itemManager = plugin.getItemsManager();
 
         // Check if is a Light item
         if(!LightBlock.isLightBlock(e.getBlock().getLocation()))

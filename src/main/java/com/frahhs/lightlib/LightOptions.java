@@ -1,7 +1,5 @@
 package com.frahhs.lightlib;
 
-import java.io.File;
-
 public class LightOptions {
     private String permissionPrefix = "light";
     private String spigotMarketID;

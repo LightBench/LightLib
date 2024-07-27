@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RecipeManager {
-    private JavaPlugin plugin;
+    private LightPlugin plugin;
     private Connection connection;
 
-    public RecipeManager(JavaPlugin plugin) {
+    public RecipeManager(LightPlugin plugin) {
         this.plugin = plugin;
-        this.connection = LightPlugin.getLightDatabase().getConnection();
+        this.connection = plugin.getLightDatabase().getConnection();
     }
 
     public void saveRecipe(LightItem item, ShapedRecipe recipe) throws SQLException {

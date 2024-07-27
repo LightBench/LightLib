@@ -22,8 +22,29 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.1.2</version>
+        <executions>
+          <execution>
+            <id>install-jar-lib</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <groupId>me.carleslc</groupId>
+          <artifactId>Simple-Yaml</artifactId>
+          <version>1.8.4</version>
+          <packaging>jar</packaging>
+          <file>${basedir}/lib/Simple-YAML-1.8.4.jar</file>
+          <generatePom>true</generatePom>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -82,6 +103,10 @@
       <id>maven-central</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
+    <repository>
+      <id>aikar</id>
+      <url>https://repo.aikar.co/content/groups/aikar/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -110,7 +135,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>

@@ -82,7 +82,7 @@ public class LightBlock extends LightProvider {
 
     public PersistentDataContainer getPersistentDataContainer() {
         if(itemDisplay == null) {
-            logger.error("Item Display (safe skin) not found, probably you issued killall command losing all the active safes.");
+            LightPlugin.getLightLogger().error("Item Display (safe skin) not found, probably you issued killall command losing all the active safes.");
             throw new RuntimeException("Item Display not found.");
         }
 
@@ -187,7 +187,7 @@ public class LightBlock extends LightProvider {
             dbConnection.commit();
             ps.close();
         } catch (Exception e) {
-            logger.error("%s: %s", e.getClass().getName(), e.getMessage());
+            LightPlugin.getLightLogger().error("%s: %s", e.getClass().getName(), e.getMessage());
         }
     }
 
@@ -206,7 +206,7 @@ public class LightBlock extends LightProvider {
             dbConnection.commit();
             ps.close();
         } catch (Exception e) {
-            logger.error("%s: %s", e.getClass().getName(), e.getMessage());
+            LightPlugin.getLightLogger().error("%s: %s", e.getClass().getName(), e.getMessage());
         }
     }
 
@@ -217,7 +217,7 @@ public class LightBlock extends LightProvider {
      * @return True if the block is a LightBlock, false otherwise.
      */
     public static boolean isLightBlock(Block block) {
-        Connection dbConnection = LightPlugin.getLightDatabase().getConnection();
+        Connection dbConnection = plugin.getLightDatabase().getConnection();
 
         try {
             PreparedStatement ps;
@@ -245,7 +245,7 @@ public class LightBlock extends LightProvider {
      * @return True if the location corresponds to a LightBlock, false otherwise.
      */
     public static boolean isLightBlock(Location location) {
-        Connection dbConnection = LightPlugin.getLightDatabase().getConnection();
+        Connection dbConnection = plugin.getLightDatabase().getConnection();
 
         try {
             PreparedStatement ps;
@@ -273,7 +273,7 @@ public class LightBlock extends LightProvider {
      * @return True if the item display corresponds to a LightBlock, false otherwise.
      */
     public static boolean isLightBlock(Entity entity) {
-        Connection dbConnection = LightPlugin.getLightDatabase().getConnection();
+        Connection dbConnection = plugin.getLightDatabase().getConnection();
 
         try {
             PreparedStatement ps;
@@ -298,7 +298,7 @@ public class LightBlock extends LightProvider {
      * @return The LightBlock at the specified location, or null if none is found.
      */
     public static LightBlock getFromLocation(Location location) {
-        Connection dbConnection = LightPlugin.getLightDatabase().getConnection();
+        Connection dbConnection = plugin.getLightDatabase().getConnection();
 
         if (!isLightBlock(location)) {
             return null;
@@ -315,7 +315,7 @@ public class LightBlock extends LightProvider {
 
             if (rs.next()) {
                 String identifier = rs.getString("material");
-                ItemManager itemManager = LightPlugin.getItemsManager();
+                ItemManager itemManager = plugin.getItemsManager();
                 LightItem item = itemManager.get(identifier);
 
                 String placer = rs.getString("placer");
@@ -350,7 +350,7 @@ public class LightBlock extends LightProvider {
      * @return The LightBlock associated with the entity display, or null if none is found.
      */
     public static LightBlock getFromUUID(UUID entityUUID) {
-        Connection dbConnection = LightPlugin.getLightDatabase().getConnection();
+        Connection dbConnection = plugin.getLightDatabase().getConnection();
 
         try {
             PreparedStatement ps;
@@ -360,7 +360,7 @@ public class LightBlock extends LightProvider {
 
             if (rs.next()) {
                 String identifier = rs.getString("material");
-                ItemManager itemManager = LightPlugin.getItemsManager();
+                ItemManager itemManager = plugin.getItemsManager();
                 LightItem item = itemManager.get(identifier);
 
                 World world = Bukkit.getWorld(rs.getString("world"));

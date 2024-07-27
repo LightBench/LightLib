@@ -7,7 +7,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -19,15 +18,15 @@ import java.util.Set;
  * Class for managing custom items related to Light mechanics.
  */
 public class ItemManager {
-    private final JavaPlugin plugin;
+    private final LightPlugin plugin;
     private final Map<String, LightItem> lightItems;
 
     /**
      * Constructor for ItemManager.
      *
-     * @param plugin The JavaPlugin instance.
+     * @param plugin The LightPlugin instance.
      */
-    public ItemManager(JavaPlugin plugin) {
+    public ItemManager(LightPlugin plugin) {
         this.plugin = plugin;
 
         // Initialize the items map
@@ -42,7 +41,7 @@ public class ItemManager {
      *
      * @param lightItem The LightItem to register.
      */
-    public void registerItems(LightItem lightItem, JavaPlugin plugin) {
+    public void registerItems(LightItem lightItem, LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Registering %s custom item...", lightItem.getName());
 
         // Check if the identifier is already declared
@@ -71,7 +70,7 @@ public class ItemManager {
      *
      * @param lightItem The LightItem to unregister.
      */
-    public void unregisterItems(LightItem lightItem, JavaPlugin plugin) {
+    public void unregisterItems(LightItem lightItem, LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Unregistering %s custom item...", lightItem.getName());
 
         // Check if the item is registered

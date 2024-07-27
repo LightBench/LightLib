@@ -1,6 +1,5 @@
 package com.frahhs.lightlib.item;
 
-import com.frahhs.lightlib.LightObject;
 import com.frahhs.lightlib.LightPlugin;
 import com.frahhs.lightlib.util.recipe.RecipeManager;
 import org.bukkit.ChatColor;
@@ -10,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -20,14 +18,16 @@ import java.util.UUID;
 /**
  * Abstract class representing a custom Light item.
  */
-public abstract class LightItem extends LightObject {
+public abstract class LightItem {
+    private LightPlugin plugin;
     protected NamespacedKey namespacedKey;
     protected ItemStack item;
 
     /**
      * Init for LightItem.
      */
-    protected void init(JavaPlugin plugin) {
+    protected void init(LightPlugin plugin) {
+        this.plugin = plugin;
         this.namespacedKey = new NamespacedKey(plugin, getIdentifier());
 
         item = new ItemStack(getVanillaMaterial(), 1);
@@ -75,7 +75,7 @@ public abstract class LightItem extends LightObject {
      * Retrieve the name of the custom Light item from the lang file.
      */
     public String getName() {
-        return messages.getMessage("items_name."  + getIdentifier(), false);
+        return LightPlugin.getInstance().getMessagesProvider().getMessage("items_name."  + getIdentifier(), false);
     }
 
     /**
@@ -105,7 +105,7 @@ public abstract class LightItem extends LightObject {
      *
      * @return The shaped recipe of the custom Light item.
      */
-    public ShapedRecipe getShapedRecipe(JavaPlugin plugin) {
+    public ShapedRecipe getShapedRecipe(LightPlugin plugin) {
         RecipeManager recipeManager = new RecipeManager(plugin);
 
         ShapedRecipe shapedRecipe = getDefaultShapedRecipe();
@@ -124,7 +124,7 @@ public abstract class LightItem extends LightObject {
         return shapedRecipe;
     }
 
-    public void updateShapedRecipe(ShapedRecipe shapedRecipe, JavaPlugin plugin) {
+    public void updateShapedRecipe(ShapedRecipe shapedRecipe, LightPlugin plugin) {
         if(!isCraftable()) {
             LightPlugin.getLightLogger().warning("Trying to update the recipe of a non craftable item: %s", getName());
             return;

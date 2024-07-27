@@ -1,7 +1,6 @@
 package com.frahhs.lightlib.item;
 
 import com.frahhs.lightlib.LightListener;
-import com.frahhs.lightlib.LightPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -14,7 +13,7 @@ public class CustomRecipesListener extends LightListener {
         Player player = (Player) e.getWhoClicked();
         ItemStack item = e.getRecipe().getResult();
 
-        ItemManager itemManager = LightPlugin.getItemsManager();
+        ItemManager itemManager = plugin.getItemsManager();
 
         for(LightItem cur : itemManager.getRegisteredItems()) {
             // Check if cur custom item is craftable
@@ -22,8 +21,8 @@ public class CustomRecipesListener extends LightListener {
                 // Check if it is a custom item
                 if (cur.getItemStack().isSimilar(item)) {
                     // Check if player have permission
-                    if (!player.hasPermission(String.format(LightPlugin.getOptions().getPermissionPrefix() + ".craft.%s", cur.getName().toLowerCase()))) {
-                        String message = messages.getMessage("general.no_permissions");
+                    if (!player.hasPermission(String.format(plugin.getOptions().getPermissionPrefix() + ".craft.%s", cur.getName().toLowerCase()))) {
+                        String message = plugin.getMessagesProvider().getMessage("general.no_permissions");
                         player.sendMessage(message);
                         e.setCancelled(true);
                     }

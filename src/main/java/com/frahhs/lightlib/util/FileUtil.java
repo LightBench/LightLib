@@ -1,7 +1,5 @@
 package com.frahhs.lightlib.util;
 
-import com.frahhs.lightlib.LightPlugin;
-
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -31,7 +31,7 @@ public class DatabaseManager {
     /**
      * Constructor for DatabaseManager.
      *
-     * @param plugin The main JavaPlugin instance.
+     * @param plugin The main LightPlugin instance.
      */
     public DatabaseManager(LightPlugin plugin, String db_name, String mysql_address, String  mysql_port, String  mysql_username, String  mysql_password, String  db_type) {
         this.sqlite_path = plugin.getDataFolder().getAbsolutePath() + "/data/" + db_name + ".db";;
