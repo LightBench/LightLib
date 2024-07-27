@@ -9,6 +9,7 @@ public class LightOptions {
 
     private String githubContentsUrl;
     private String githubUrlTemplate;
+    private Integer bstatsID = null;
 
     public void setPermissionPrefix(String permissionPrefix) {
         this.permissionPrefix = permissionPrefix;
@@ -30,6 +31,10 @@ public class LightOptions {
         this.githubUrlTemplate = githubUrlTemplate;
     }
 
+    public void setBstatsID(int bstatsID) {
+        this.bstatsID = bstatsID;
+    }
+
     public String getPermissionPrefix() {
         return permissionPrefix;
     }
@@ -48,5 +53,9 @@ public class LightOptions {
 
     public String getGithubUrlTemplate() {
         return githubUrlTemplate;
+    }
+
+    public Integer getBstatsID() {
+        return bstatsID;
     }
 }

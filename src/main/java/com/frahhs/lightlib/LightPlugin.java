@@ -11,6 +11,7 @@ import com.frahhs.lightlib.provider.MessagesProvider;
 import com.frahhs.lightlib.util.bag.BagManager;
 import com.frahhs.lightlib.util.logging.LightLogger;
 import com.frahhs.lightlib.util.update.UpdateChecker;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -80,6 +81,10 @@ public abstract class LightPlugin extends JavaPlugin {
                 UpdateChecker updateChecker = new UpdateChecker(options.getSpigotMarketID());
                 updateChecker.enable(this);
             }
+        }
+
+        if(options.getBstatsID() != null) {
+            Metrics metrics = new Metrics(this, options.getBstatsID());
         }
 
         onLightEnabled();
