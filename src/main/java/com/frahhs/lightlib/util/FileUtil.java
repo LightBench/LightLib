@@ -1,6 +1,9 @@
 package com.frahhs.lightlib.util;
 
 import com.frahhs.lightlib.LightPlugin;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -50,24 +53,34 @@ public abstract class FileUtil {
     }
 
     /**
-     * Compresses a file using GZIP compression.
+     * Compresses a file using tar and GZIP compression.
      *
      * @param inputFile  The input file to compress.
      * @param outputFile The output file where compressed data will be written.
      * @throws IOException If an I/O error occurs during compression.
      */
     public static void compressFile(File inputFile, File outputFile) throws IOException {
-        try (FileInputStream fis = new FileInputStream(inputFile);
-             BufferedInputStream bis = new BufferedInputStream(fis);
-             FileOutputStream fos = new FileOutputStream(outputFile);
+        try (FileOutputStream fos = new FileOutputStream(outputFile);
              BufferedOutputStream bos = new BufferedOutputStream(fos);
-             GZIPOutputStream gzipOut = new GZIPOutputStream(bos)) {
+             GzipCompressorOutputStream gzipOut = new GzipCompressorOutputStream(bos);
+             TarArchiveOutputStream tarOut = new TarArchiveOutputStream(gzipOut)) {
 
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = bis.read(buffer)) != -1) {
-                gzipOut.write(buffer, 0, len);
+            TarArchiveEntry tarEntry = new TarArchiveEntry(inputFile, inputFile.getName());
+            tarEntry.setSize(inputFile.length());
+
+            tarOut.putArchiveEntry(tarEntry);
+
+            try (FileInputStream fis = new FileInputStream(inputFile);
+                 BufferedInputStream bis = new BufferedInputStream(fis)) {
+
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = bis.read(buffer)) != -1) {
+                    tarOut.write(buffer, 0, len);
+                }
             }
+
+            tarOut.closeArchiveEntry();
         }
     }
 }
