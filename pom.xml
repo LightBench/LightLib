@@ -28,28 +28,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <groupId>me.carleslc</groupId>
-                    <artifactId>Simple-Yaml</artifactId>
-                    <version>1.8.4</version>
-                    <packaging>jar</packaging>
-                    <file>${basedir}/lib/Simple-YAML-1.8.4.jar</file>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>install-jar-lib</id>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
@@ -118,6 +96,10 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
@@ -161,9 +143,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>me.carleslc</groupId>
-            <artifactId>Simple-Yaml</artifactId>
-            <version>1.8.4</version>
+            <groupId>com.github.LightBench</groupId>
+            <artifactId>Simple-YAML</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>co.aikar</groupId>
