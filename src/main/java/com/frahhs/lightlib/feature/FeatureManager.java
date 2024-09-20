@@ -5,6 +5,7 @@ import com.frahhs.lightlib.LightPlugin;
 import com.frahhs.lightlib.feature.exception.FeatureException;
 import com.frahhs.lightlib.item.LightItem;
 import com.frahhs.lightlib.util.bag.Bag;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class FeatureManager {
      *
      * @param feature The feature to register.
      */
-    public void registerFeatures(LightFeature feature, LightPlugin plugin) {
+    public void registerFeatures(@NotNull LightFeature feature,@NotNull LightPlugin plugin) {
         registerFeatures(feature, null, plugin);
     }
 
@@ -41,8 +42,8 @@ public class FeatureManager {
      *
      * @param feature The feature to register.
      */
-    void registerFeatures(LightFeature feature, @Nullable LightFeature parent, LightPlugin plugin) {
-        plugin.getLightLogger().fine("Registering %s feature...", feature.getID());
+    void registerFeatures(@NotNull LightFeature feature, @Nullable LightFeature parent, @NotNull LightPlugin plugin) {
+        LightPlugin.getLightLogger().fine("Registering %s feature...", feature.getID());
 
         if(parent != null) {
             if (feature.getClass() == parent.getClass()) {

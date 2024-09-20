@@ -22,27 +22,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>3.1.2</version>
-        <executions>
-          <execution>
-            <id>install-jar-lib</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <groupId>me.carleslc</groupId>
-          <artifactId>Simple-Yaml</artifactId>
-          <version>1.8.4</version>
-          <packaging>jar</packaging>
-          <file>${basedir}/lib/Simple-YAML-1.8.4.jar</file>
-          <generatePom>true</generatePom>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.0</version>
         <executions>

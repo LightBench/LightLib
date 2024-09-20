@@ -1,20 +1,25 @@
 package com.frahhs.lightlib.feature;
 
 import com.frahhs.lightlib.LightPlugin;
+import com.frahhs.lightlib.config.ConfigEntry;
+import com.frahhs.lightlib.config.LightConfig;
 import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.file.YamlFile;
+import org.yaml.snakeyaml.comments.CommentType;
 
 import java.util.List;
 
 public class FeatureConfig {
     private final LightFeature feature;
     private final FeatureConfig parent;
-    private final YamlFile yamlFile;
+
+    private final LightConfig lightConfig;
 
     public FeatureConfig(LightFeature feature, LightPlugin plugin, FeatureConfig parent) {
         this.feature = feature;
-        this.yamlFile = plugin.getYamlConfig();
         this.parent = parent;
+
+        this.lightConfig = plugin.getLightConfig();
     }
 
 
@@ -22,58 +27,12 @@ public class FeatureConfig {
         this(feature, plugin, null);
     }
 
-    private void add(@NotNull String key, @NotNull Object defaultValue, String comment) {
-        yamlFile.setComment(generatePath(key), comment);
-        yamlFile.addDefault(generatePath(key), defaultValue);
-    }
-
-    private void add(@NotNull String key, @NotNull Object defaultValue) {
-        yamlFile.addDefault(generatePath(key), defaultValue);
-    }
-
-    public void addString(@NotNull String key, @NotNull String defaultValue, @NotNull String comment) {
-        add(key, defaultValue, comment);
-    }
-
-    public void addString(@NotNull String key, @NotNull String defaultValue) {
-        add(key, defaultValue);
-    }
-
-    public void addInt(@NotNull String key, int defaultValue, @NotNull String comment) {
-        add(key, defaultValue, comment);
-    }
-
-    public void addInt(@NotNull String key, int defaultValue) {
-        add(key, defaultValue);
-    }
-
-    public void addBoolean(@NotNull String key, boolean defaultValue, @NotNull String comment) {
-        add(key, defaultValue, comment);
-    }
-
-    public void addBoolean(@NotNull String key, boolean defaultValue) {
-        add(key, defaultValue);
-    }
-
-    public void addDouble(@NotNull String key, double defaultValue, @NotNull String comment) {
-        add(key, defaultValue, comment);
-    }
-
-    public void addDouble(@NotNull String key, double defaultValue) {
-        add(key, defaultValue);
-    }
-
-    public void addStringList(@NotNull String key, @NotNull List<String> defaultValue, @NotNull String comment) {
-        add(key, defaultValue, comment);
-    }
-
-    public void addStringList(@NotNull String key, @NotNull List<String> defaultValue) {
-        add(key, defaultValue);
+    public ConfigEntry addEntry(@NotNull String key, @NotNull Object defaultValue) {
+        return lightConfig.add(generatePath(key), defaultValue);
     }
 
     @NotNull
     private String generatePath(@NotNull String key) {
-        System.out.println(getPath());
         return String.format("%s.%s", getPath(), key);
     }
 
