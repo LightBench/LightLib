@@ -48,33 +48,13 @@ public class LightConfig {
         return yamlFile;
     }
 
-/*    protected ConfigEntry add(@NotNull String key, @NotNull Object defaultValue, String comment) {
-        yamlFile.setComment(key, comment);
-        yamlFile.addDefault(key, defaultValue);
-    }*/
-
     public ConfigEntry add(@NotNull String key, @NotNull Object defaultValue) {
         yamlFile.addDefault(key, defaultValue);
         return new ConfigEntry(yamlFile, key, defaultValue);
     }
 
-    public ConfigEntry addString(@NotNull String key, @NotNull String defaultValue) {
-        return add(key, defaultValue);
-    }
-
-    public ConfigEntry addInt(@NotNull String key, int defaultValue) {
-        return add(key, defaultValue);
-    }
-
-    public ConfigEntry addBoolean(@NotNull String key, boolean defaultValue) {
-        return add(key, defaultValue);
-    }
-
-    public ConfigEntry addDouble(@NotNull String key, double defaultValue) {
-        return add(key, defaultValue);
-    }
-
-    public ConfigEntry addStringList(@NotNull String key, @NotNull List<String> defaultValue) {
-        return add(key, defaultValue);
+    public ConfigEntry set(@NotNull String key, @NotNull Object value) {
+        yamlFile.set(key, value);
+        return new ConfigEntry(yamlFile, key, value);
     }
 }
