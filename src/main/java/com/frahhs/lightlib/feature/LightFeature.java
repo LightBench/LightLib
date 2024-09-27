@@ -14,47 +14,34 @@ import java.util.List;
  * Abstract class representing a feature in the plugin.
  */
 public abstract class LightFeature {
-    protected List<LightListener> eventsList = new ArrayList<>();
-    protected List<Bag> bagsList = new ArrayList<>();
-    protected List<LightItem> itemsList = new ArrayList<>();
-    protected List<LightFeature> subFeatures = new ArrayList<>();
+    List<LightListener> eventsList = new ArrayList<>();
+    List<Bag> bagsList = new ArrayList<>();
+    List<LightItem> itemsList = new ArrayList<>();
+    List<LightFeature> subFeatures = new ArrayList<>();
 
-    protected FeatureConfig config;
+    FeatureConfig config;
+
+    /**
+     * Called when the feature is loaded.
+     */
+    protected void onLoad(LightPlugin plugin) {}
 
     /**
      * Called when the feature is enabled.
      */
-    protected abstract void onEnable();
+    protected abstract void onEnable(LightPlugin plugin);
 
     /**
      * Called when the feature is disabled.
      */
-    protected abstract void onDisable();
-
-    /**
-     * Registers sub features for the current feature.
-     */
-    protected abstract void registerSubFeature(LightPlugin plugin);
-
-    /**
-     * Registers items for the feature.
-     */
-    protected abstract void registerItems(LightPlugin plugin);
-
-    /**
-     * Registers bags for the feature.
-     */
-    protected abstract void registerBags(LightPlugin plugin);
-
-    /**
-     * Registers events for the feature.
-     */
-    protected abstract void registerEvents(LightPlugin plugin);
+    protected abstract void onDisable(LightPlugin plugin);
 
     /**
      * Handle configuration.
      */
-    protected abstract void configure();
+    protected FeatureConfig getConfig() {
+        return config;
+    }
 
     /**
      * Retrieves the ID of the feature.

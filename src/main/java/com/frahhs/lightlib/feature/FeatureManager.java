@@ -5,6 +5,7 @@ import com.frahhs.lightlib.LightPlugin;
 import com.frahhs.lightlib.feature.exception.FeatureException;
 import com.frahhs.lightlib.item.LightItem;
 import com.frahhs.lightlib.util.bag.Bag;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +48,7 @@ public class FeatureManager {
 
         if(parent != null) {
             if (feature.getClass() == parent.getClass()) {
-                throw new FeatureException(String.format("The feature %s is trying to declare itself as sub feature.", feature.getID()));
+                throw new FeatureException(String.format("The feature %s is trying to declare itself as sub feature, it will create an infinite loop.", feature.getID()));
             }
         }
 
@@ -62,17 +63,21 @@ public class FeatureManager {
         // Set the feature configuration
         feature.setFeatureConfig(featureConfig);
 
-        // Update the configuration
-        feature.configure();
-
-        // Register feature parameters
-        feature.registerSubFeature(plugin);
-        feature.registerItems(plugin);
-        feature.registerBags(plugin);
-        feature.registerEvents(plugin);
+        // On plugin load stuff
+        feature.onLoad(plugin);
 
         // Enable the feature
-        feature.onEnable();
+        feature.onEnable(plugin);
+
+        // Register feature parameters in the correct order
+        for(LightFeature subFeature : feature.subFeatures)
+            registerFeatures(subFeature, feature, plugin);
+        for(LightItem lightItem : feature.itemsList)
+            plugin.getItemsManager().registerItems(lightItem, plugin);
+        for(Bag bag : feature.bagsList)
+            plugin.getBagManager().registerBags(bag);
+        for(Listener listener : feature.eventsList)
+            plugin.getServer().getPluginManager().registerEvents(listener, plugin);
 
         // Save the feature
         features.put(feature.getID(), feature);
@@ -89,7 +94,7 @@ public class FeatureManager {
         LightPlugin.getLightLogger().fine("Unregistering %s feature...", feature.getID());
 
         // Disable the feature
-        feature.onDisable();
+        feature.onDisable(plugin);
 
         // Unregister the feature parameters
         feature.unregisterSubFeatures(plugin);
@@ -119,8 +124,8 @@ public class FeatureManager {
         try {
             for (LightFeature feature : features.values()) {
                 LightPlugin.getLightLogger().fine("Enabling %s feature...", feature.getID());
-                feature.onEnable();
-                feature.registerItems(plugin);
+                feature.onLoad(plugin);
+                feature.onEnable(plugin);
                 LightPlugin.getLightLogger().fine("Enabled %s feature.", feature.getID());
             }
         } catch (Error e) {
@@ -135,7 +140,7 @@ public class FeatureManager {
         try {
             for (LightFeature feature : features.values()) {
                 LightPlugin.getLightLogger().finer("Disabling %s feature...", feature.getID());
-                feature.onDisable();
+                feature.onDisable(plugin);
                 LightPlugin.getLightLogger().finer("Disabled %s feature.", feature.getID());
             }
         } catch (Exception e) {
@@ -145,21 +150,17 @@ public class FeatureManager {
 
     public void registerFeatureEvents(LightListener listener, LightFeature feature) {
         feature.eventsList.add(listener);
-        plugin.getServer().getPluginManager().registerEvents(listener, plugin);
     }
 
     public void registerFeatureBags(Bag bag, LightFeature feature) {
         feature.bagsList.add(bag);
-        plugin.getBagManager().registerBags(bag);
     }
 
     public void registerFeatureItems(LightItem item, LightFeature feature) {
         feature.itemsList.add(item);
-        plugin.getItemsManager().registerItems(item, plugin);
     }
 
     public void registerFeatureSubFeatures(LightFeature subFeature, LightFeature feature) {
         feature.subFeatures.add(subFeature);
-        registerFeatures(subFeature, feature, plugin);
     }
 }
