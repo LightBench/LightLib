@@ -28,7 +28,7 @@ public class LightBlockListener extends LightListener {
         LightItem lightItem = itemManager.get(item);
 
         // Check if is a Light block.
-        if(!lightItem.getVanillaMaterial().isBlock())
+        if(!lightItem.getMaterial().isBlock())
             return;
 
         // Instance of the Light block.

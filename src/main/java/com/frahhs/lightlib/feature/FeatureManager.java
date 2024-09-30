@@ -2,7 +2,9 @@ package com.frahhs.lightlib.feature;
 
 import com.frahhs.lightlib.LightListener;
 import com.frahhs.lightlib.LightPlugin;
+import com.frahhs.lightlib.feature.annotations.Feature;
 import com.frahhs.lightlib.feature.exception.FeatureException;
+import com.frahhs.lightlib.feature.exception.FeatureIdentifierException;
 import com.frahhs.lightlib.item.LightItem;
 import com.frahhs.lightlib.util.bag.Bag;
 import org.bukkit.event.Listener;
@@ -46,10 +48,22 @@ public class FeatureManager {
     void registerFeatures(@NotNull LightFeature feature, @Nullable LightFeature parent, @NotNull LightPlugin plugin) {
         LightPlugin.getLightLogger().fine("Registering %s feature...", feature.getID());
 
+        // Check if the feature is annotated
+        Class<? extends LightFeature> featureClass = feature.getClass();
+        if(!featureClass.isAnnotationPresent(Feature.class)) {
+            throw new FeatureException(String.format("Trying to register the feature [%s] without the \"Feature\" annotation.", feature.getID()));
+        }
+
+        // Check if the feature is trying to declare itself as a sub-feature
         if(parent != null) {
             if (feature.getClass() == parent.getClass()) {
                 throw new FeatureException(String.format("The feature %s is trying to declare itself as sub feature, it will create an infinite loop.", feature.getID()));
             }
+        }
+
+        // Check if the feature id is not available
+        if(features.containsKey(feature.getID())) {
+            throw new FeatureIdentifierException(String.format("The identifier %s chosen for the feature %s is already in use", feature.getID(), feature.getClass().getName()));
         }
 
         // Setup feature configuration

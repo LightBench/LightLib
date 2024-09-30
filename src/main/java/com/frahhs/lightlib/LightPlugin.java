@@ -2,20 +2,22 @@ package com.frahhs.lightlib;
 
 import co.aikar.commands.PaperCommandManager;
 import com.frahhs.lightlib.block.LightBlockListener;
-import com.frahhs.lightlib.config.LightConfig;
 import com.frahhs.lightlib.database.DatabaseManager;
 import com.frahhs.lightlib.feature.FeatureManager;
 import com.frahhs.lightlib.gui.GUIListener;
 import com.frahhs.lightlib.item.ItemManager;
 import com.frahhs.lightlib.provider.Localization;
+import com.frahhs.lightlib.util.ConfigManager;
 import com.frahhs.lightlib.util.bag.BagManager;
 import com.frahhs.lightlib.util.logging.LightLogger;
 import com.frahhs.lightlib.util.update.UpdateChecker;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.simpleyaml.configuration.comments.format.YamlCommentFormatter;
+import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.file.YamlFile;
-import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
 
@@ -26,7 +28,7 @@ public abstract class LightPlugin extends JavaPlugin {
     private static LightLogger logger;
 
     // Providers
-    private static LightConfig lightConfig;
+    private static YamlFile config;
     private static Localization Localization;
 
     // Managers
@@ -39,32 +41,22 @@ public abstract class LightPlugin extends JavaPlugin {
     // Options
     private static LightOptions options;
 
-    public void onLightConfiguration() {}
     public void onLightLoad() {}
-    public void onLightReload() {};
-
-    public abstract void onLightEnabled();
-    public abstract void onLightDisabled();
+    public void onLightEnabled() {}
+    public void onLightDisabled() {}
+    public void onLightReload() {}
 
     @Override
     public void onLoad() {
         options = new LightOptions();
 
-        lightConfig = new LightConfig(this);
-        lightConfig.read();
-
-        lightConfig.addBoolean("enabled", true);
-        lightConfig.addBoolean("update-check", true);
-        lightConfig.addString("language", "en");
-        lightConfig.addString("prefix", "§3[§6Robbing§3] §f");
-        lightConfig.addString("database.type", "SQLite");
-        lightConfig.addString("database.database-name", "LightDB");
-        lightConfig.addString("database.mysql.address", "localhost");
-        lightConfig.addString("database.mysql.port", "3306");
-        lightConfig.addString("database.mysql.username", "");
-        lightConfig.addString("database.mysql.password", "");
-
-        onLightConfiguration();
+        try {
+            config = new YamlFile(getDataFolder() + File.separator + "config.yml");
+            config.createOrLoadWithComments();
+            ConfigManager.initConfig(this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         onLightLoad();
     }
@@ -75,7 +67,7 @@ public abstract class LightPlugin extends JavaPlugin {
 
         // Set client locale
         Locale.setDefault(Locale.ENGLISH);
-        locale = Locale.of(lightConfig.getConfig().getString("language"));
+        locale = Locale.of(config.getString("language"));
 
         // Enable logger
         logger = new LightLogger(this.getName(), this);
@@ -83,7 +75,6 @@ public abstract class LightPlugin extends JavaPlugin {
 
         // Enable managers
         Localization = new Localization(this);
-
         itemManager = new ItemManager(this);
         commandManager  = new PaperCommandManager(this);
         bagManager = new BagManager();
@@ -92,12 +83,12 @@ public abstract class LightPlugin extends JavaPlugin {
         // Enable Database connection
         databaseManager = new DatabaseManager(
                 this,
-                lightConfig.getConfig().getString("database.database-name"),
-                lightConfig.getConfig().getString("database.mysql.address"),
-                lightConfig.getConfig().getString("database.mysql.port"),
-                lightConfig.getConfig().getString("database.mysql.username"),
-                lightConfig.getConfig().getString("database.mysql.password"),
-                lightConfig.getConfig().getString("database.type")
+                config.getString("database.database-name"),
+                config.getString("database.mysql.address"),
+                config.getString("database.mysql.port"),
+                config.getString("database.mysql.username"),
+                config.getString("database.mysql.password"),
+                config.getString("database.type")
         );
 
         getServer().getPluginManager().registerEvents(new LightBlockListener(),this);
@@ -113,10 +104,14 @@ public abstract class LightPlugin extends JavaPlugin {
         }
 
         onLightEnabled();
-        lightConfig.save();
+        try {
+            config.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // Disable plugin if is disabled in the config
-        if(!lightConfig.getConfig().getBoolean("enabled"))
+        if(!config.getBoolean("enabled"))
             this.getPluginLoader().disablePlugin(this);
     }
 
@@ -147,7 +142,11 @@ public abstract class LightPlugin extends JavaPlugin {
 
     public void onReload() {
         // Config and messages providers
-        lightConfig.read();
+        try {
+            config.createOrLoadWithComments();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Localization.reload();
 
         // Item
@@ -186,21 +185,25 @@ public abstract class LightPlugin extends JavaPlugin {
     }
 
     /**
-     * Will retrieve the LightConfig
+     * LightLib use SimpleYaml to handle yaml files, for this reason we avoid to use getConfig.
+     * Use getLightConfig instead to handle the configuration file.
      *
-     * @return the LightConfig
+     * @return the FileConfiguration of the plugin
      */
-    public LightConfig getLightConfig() {
-        return lightConfig;
+    @Deprecated
+    @NotNull
+    @Override
+    public FileConfiguration getConfig() {
+        return super.getConfig();
     }
 
     /**
-     * Will retrieve the LightConfig
+     * Will retrieve the YamlFile of LightConfig, check the repo of SimpleYaml for more info.
      *
-     * @return the LightConfig
+     * @return the YamlFile of the config.
      */
-    public YamlFile getYamlConfig() {
-        return lightConfig.getConfig();
+    public YamlFile getLightConfig() {
+        return config;
     }
 
     /**

@@ -10,7 +10,10 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.simpleyaml.configuration.file.YamlFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +25,7 @@ public abstract class LightItem {
     private LightPlugin plugin;
     protected NamespacedKey namespacedKey;
     protected ItemStack item;
+    YamlFile configuration;
 
     /**
      * Init for LightItem.
@@ -30,7 +34,7 @@ public abstract class LightItem {
         this.plugin = plugin;
         this.namespacedKey = new NamespacedKey(plugin, getIdentifier());
 
-        item = new ItemStack(getVanillaMaterial(), 1);
+        item = new ItemStack(getMaterial(), 1);
 
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
@@ -72,10 +76,18 @@ public abstract class LightItem {
     }
 
     /**
+     * Retrieve the default name of the custom Light item from the lang file.
+     */
+    public abstract String getDefaultName();
+
+    /**
      * Retrieve the name of the custom Light item from the lang file.
      */
     public String getName() {
-        return LightPlugin.getInstance().getMessagesProvider().getMessage("items_name."  + getIdentifier(), false);
+        if(configuration.getString("display-name") == null)
+            return getDefaultName();
+
+        return configuration.getString("display-name");
     }
 
     /**
@@ -95,9 +107,26 @@ public abstract class LightItem {
     }
 
     /**
-     * Retrieves the name of the custom Light item.
+     * Retrieves the default custom model data of the custom Light item.
      */
-    public abstract int getCustomModelData();
+    public abstract int getDefaultCustomModelData();
+
+    /**
+     * Retrieves the custom model data of the custom Light item.
+     */
+    public int getCustomModelData() {
+        if(configuration.get("custom-model-data") == null)
+            return getDefaultCustomModelData();
+
+        return configuration.getInt("custom-model-data");
+    }
+
+    /**
+     * Retrieves the default shaped recipe of the custom Light item.
+     *
+     * @return The shaped recipe of the custom Light item.
+     */
+    public abstract ShapedRecipe getDefaultShapedRecipe();
 
     /**
      * Retrieves the saved shaped recipe of the custom Light item.
@@ -160,13 +189,6 @@ public abstract class LightItem {
     }
 
     /**
-     * Retrieves the default shaped recipe of the custom Light item.
-     *
-     * @return The shaped recipe of the custom Light item.
-     */
-    public abstract ShapedRecipe getDefaultShapedRecipe();
-
-    /**
      * Retrieves if the custom Light item can be given.
      */
     public abstract boolean isGivable();
@@ -177,8 +199,58 @@ public abstract class LightItem {
     public abstract boolean isUnique();
 
     /**
+     * Retrieves the default material of the custom Light item.
+     */
+    @NotNull
+    public abstract Material getDefaultMaterial();
+
+    /**
      * Retrieves the name of the custom Light item.
      */
     @NotNull
-    public abstract Material getVanillaMaterial();
+    public Material getMaterial() {
+        String materialString = configuration.getString("material");
+        if(materialString == null)
+            return getDefaultMaterial();
+
+        Material material = Material.getMaterial(materialString);
+
+        if(material == null) {
+            LightPlugin.getLightLogger().error("The custom item %s have an invalid material: %s.", getIdentifier(), materialString);
+            return getDefaultMaterial();
+        }
+
+        return material;
+    }
+
+    void configure(LightPlugin plugin) {
+        // Create new YAML file with relative path
+        String uri = plugin.getDataFolder() +
+                File.separator         +
+                "items"                +
+                File.separator         +
+                getIdentifier()        +
+                ".yml"                 ;
+
+        configuration = new YamlFile(uri);
+
+        try {
+            if (!configuration.exists()) {
+                configuration.createNewFile();
+            }
+            configuration.load();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
+        configuration.addDefault("display-name", getDefaultName());
+        configuration.addDefault("material", getDefaultMaterial().toString());
+        configuration.addDefault("custom-model-data", getDefaultCustomModelData());
+
+        try {
+            configuration.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

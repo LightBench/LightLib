@@ -1,7 +1,7 @@
 package com.frahhs.lightlib.item;
 
 import com.frahhs.lightlib.LightPlugin;
-import com.frahhs.lightlib.item.exception.DuplicateIdentifierException;
+import com.frahhs.lightlib.item.exception.IdentifierException;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -9,10 +9,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class for managing custom items related to Light mechanics.
@@ -30,7 +30,7 @@ public class ItemManager {
         this.plugin = plugin;
 
         // Initialize the items map
-        lightItems = new HashMap<>();
+        lightItems = new ConcurrentHashMap<>();
 
         // Register the listener for the crafting permissions checking
         plugin.getServer().getPluginManager().registerEvents(new CustomRecipesListener(), plugin);
@@ -42,14 +42,15 @@ public class ItemManager {
      * @param lightItem The LightItem to register.
      */
     public void registerItems(LightItem lightItem, LightPlugin plugin) {
-        LightPlugin.getLightLogger().fine("Registering %s custom item...", lightItem.getName());
+        LightPlugin.getLightLogger().fine("Registering %s custom item...", lightItem.getIdentifier());
 
         // Check if the identifier is already declared
         if (lightItems.containsKey(lightItem.getIdentifier())) {
-            throw new DuplicateIdentifierException(String.format("Duplicate item identifier [%s] found.", lightItem.getName()));
+            throw new IdentifierException(String.format("Duplicate item identifier [%s] found.", lightItem.getIdentifier()));
         }
 
         // Init the item
+        lightItem.configure(plugin);
         lightItem.init(plugin);
 
         // Create the item recipe

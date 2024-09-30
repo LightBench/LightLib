@@ -24,7 +24,7 @@ public class Localization {
      */
     public Localization(LightPlugin plugin) {
         this.plugin = plugin;
-        this.prefix = plugin.getYamlConfig().getString("prefix");
+        this.prefix = plugin.getLightConfig().getString("prefix");
         this.lang = new HashMap<>();
 
         loadLanguageFiles();
@@ -34,11 +34,11 @@ public class Localization {
      * Reloads the Localization, updating language settings and reloading language files.
      */
     public void reload() {
-        this.prefix = plugin.getYamlConfig().getString("prefix");
+        this.prefix = plugin.getLightConfig().getString("prefix");
 
         loadLanguageFiles();
         if (!lang.containsKey(plugin.getLocale())) {
-            plugin.getLightLogger().warning("Language \"%s\" not found! English automatically selected.", plugin.getLocale());
+            LightPlugin.getLightLogger().warning("Language \"%s\" not found! English automatically selected.", plugin.getLocale());
             plugin.setLocale(Locale.ENGLISH);
         }
     }

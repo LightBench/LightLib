@@ -76,8 +76,8 @@ public class LightBlock extends LightProvider {
         return item;
     }
 
-    public Material getVanillaMaterial() {
-        return item.getVanillaMaterial();
+    public Material getMaterial() {
+        return item.getMaterial();
     }
 
     public PersistentDataContainer getPersistentDataContainer() {

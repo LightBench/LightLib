@@ -41,7 +41,7 @@ public class UpdateChecker extends LightListener {
 
     @EventHandler
     public void onAdminJoin(PlayerJoinEvent event) {
-        YamlFile config = plugin.getYamlConfig();
+        YamlFile config = plugin.getLightConfig();
 
         // Check if new version is out
         if(config.getBoolean("update-check")) {
@@ -69,7 +69,7 @@ public class UpdateChecker extends LightListener {
 
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
-        YamlFile config = plugin.getYamlConfig();
+        YamlFile config = plugin.getLightConfig();
 
         // Check if new version is out
         if(config.getBoolean("update-check")) {
